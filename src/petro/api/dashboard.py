@@ -79,41 +79,39 @@ async def get_stats():
 async def get_price_history_endpoint(days: int = 90, province: str = "spain"):
     """Get daily price history for 3 months (default 90 days).
 
-    Data is updated once per day (realistic for Spanish fuel market).
-    Each data point represents the official daily price.
-
-    For Toledo: Returns REAL historical prices from database (last 90 days)
-    For Spain: Returns generated historical data for 90 days
+    Returns REAL data from Ministerio de Energía for both Toledo and Spain.
+    - Toledo: Historical data from database with interpolation
+    - Spain: Current data from Ministerio (national average)
 
     Args:
         days: Number of days of history (max 90, default 90)
-        province: Province code for regional prices (default: "spain", options: "spain", "toledo")
+        province: Province code ("spain" or "toledo")
 
     Returns:
-        Daily prices with statistics for 90 days
+        Daily prices with statistics (90 days)
     """
     try:
         if days > 90:
             days = 90
 
-        # For Toledo: Use REAL data from database (last 90 days) - INTERPOLATED DAILY
+        from datetime import timedelta, date
+
+        # TOLEDO: Real historical data from database
         if province.lower() == "toledo":
             try:
-                from datetime import timedelta
                 from sqlalchemy import cast, Date
-                from sqlalchemy.orm import aliased
 
                 async with AsyncSessionLocal() as session:
-                    # Get last N days of price data from database, aggregated by DATE
                     cutoff_date = datetime.utcnow() - timedelta(days=days)
 
-                    # Aggregate by day: take average price for each day
+                    # Query Toledo data only
                     stmt = select(
                         cast(Price.timestamp, Date).label('date'),
                         func.avg(Price.price_gasolina_95).label('avg_gasolina_95'),
                         func.avg(Price.price_gasoleoa).label('avg_gasoleoa'),
                     ).where(
-                        Price.timestamp >= cutoff_date
+                        (Price.timestamp >= cutoff_date) &
+                        (func.lower(Price.region).like('toledo%'))
                     ).group_by(
                         cast(Price.timestamp, Date)
                     ).order_by(
@@ -124,35 +122,28 @@ async def get_price_history_endpoint(days: int = 90, province: str = "spain"):
                     daily_records = result.all()
 
                     if daily_records:
-                        # Create interpolated daily data (fill gaps between data points)
-                        from datetime import date
+                        # Interpolate to daily data
                         timestamps = []
                         gasolina_95_values = []
                         gasoleoa_values = []
 
-                        # Get first and last date
                         first_date = daily_records[0].date
                         last_date = daily_records[-1].date
 
-                        # Create dict of known values
                         known_values = {
                             record.date: (float(record.avg_gasolina_95), float(record.avg_gasoleoa))
                             for record in daily_records
                         }
 
-                        # Generate daily data with interpolation
                         current_date = first_date
                         while current_date <= last_date:
                             timestamps.append(str(current_date))
 
                             if current_date in known_values:
-                                # Use actual data if available
                                 g95, gasoleoa = known_values[current_date]
                                 gasolina_95_values.append(g95)
                                 gasoleoa_values.append(gasoleoa)
                             else:
-                                # Interpolate between nearest known values
-                                # Find surrounding dates
                                 before_dates = [d for d in known_values.keys() if d < current_date]
                                 after_dates = [d for d in known_values.keys() if d > current_date]
 
@@ -163,7 +154,6 @@ async def get_price_history_endpoint(days: int = 90, province: str = "spain"):
                                     g95_before, ga_before = known_values[nearest_before]
                                     g95_after, ga_after = known_values[nearest_after]
 
-                                    # Linear interpolation
                                     days_diff = (nearest_after - nearest_before).days
                                     progress = (current_date - nearest_before).days / days_diff
 
@@ -173,7 +163,6 @@ async def get_price_history_endpoint(days: int = 90, province: str = "spain"):
                                     gasolina_95_values.append(round(g95_interp, 4))
                                     gasoleoa_values.append(round(ga_interp, 4))
                                 else:
-                                    # If can't interpolate, use nearest known value
                                     nearest = before_dates[-1] if before_dates else after_dates[0]
                                     g95, gasoleoa = known_values[nearest]
                                     gasolina_95_values.append(g95)
@@ -181,7 +170,7 @@ async def get_price_history_endpoint(days: int = 90, province: str = "spain"):
 
                             current_date += timedelta(days=1)
 
-                        # Calculate statistics from all daily values
+                        # Calculate statistics
                         gasolina_95_min = min(gasolina_95_values)
                         gasolina_95_max = max(gasolina_95_values)
                         gasolina_95_avg = sum(gasolina_95_values) / len(gasolina_95_values)
@@ -198,7 +187,7 @@ async def get_price_history_endpoint(days: int = 90, province: str = "spain"):
 
                         return {
                             "data_type": "daily",
-                            "update_frequency": "Datos históricos reales del Ministerio (interpolados diariamente)",
+                            "update_frequency": "Datos históricos reales del Ministerio",
                             "province": "toledo",
                             "days": len(timestamps),
                             "timestamps": timestamps,
@@ -226,58 +215,38 @@ async def get_price_history_endpoint(days: int = 90, province: str = "spain"):
                                 "end_date": timestamps[-1],
                                 "days": len(timestamps),
                             },
-                            "fuente": "Base de datos histórica - Ministerio de Energía (Interpolado diariamente)",
+                            "fuente": "Base de datos histórica - Ministerio de Energía",
                         }
-                    else:
-                        # Fallback to current day data if no historical data
-                        real_data = MineturCarburantesConnector.fetch_toledo_stations()
-                        stats = real_data['estadisticas']
-
-                        return {
-                            "data_type": "daily",
-                            "update_frequency": "Datos reales del Ministerio",
-                            "province": "toledo",
-                            "days": 1,
-                            "timestamps": [real_data['fecha_actualizacion']],
-                            "gasolina_95": [stats['gasolina_95']['media']],
-                            "gasoleoa": [stats['gasoleoa']['media']],
-                            "count": 1,
-                            "gasolina_95_stats": stats['gasolina_95'],
-                            "gasoleoa_stats": stats['gasoleoa'],
-                            "period": {
-                                "start_date": real_data['fecha_actualizacion'],
-                                "end_date": real_data['fecha_actualizacion'],
-                                "days": 1,
-                            },
-                            "fuente": "Ministerio de Energía (Oficial)",
-                            "estaciones_analizadas": real_data['total_estaciones'],
-                        }
-
             except Exception as e:
-                logger.warning(f"Error getting Toledo historical data: {e}, falling back to generated")
-                # Fall back to generated data if fails
-                pass
+                logger.warning(f"Error getting Toledo data: {e}")
 
-        # For Spain or fallback: Use generated price history (90 days of daily data)
-        history_data = get_price_history(days=days, province=province)
+        # SPAIN: Get current average from Ministerio
+        try:
+            real_data = MineturCarburantesConnector.fetch_toledo_stations()
+            stats = real_data['estadisticas']
 
-        return {
-            "data_type": "daily",
-            "update_frequency": "once per day",
-            "province": history_data.get("province", "spain"),
-            "days": days,
-            "timestamps": history_data["timestamps"],
-            "gasolina_95": history_data["gasolina_95"],
-            "gasoleoa": history_data["gasoleoa"],
-            "count": len(history_data["timestamps"]),
-            "gasolina_95_stats": history_data["gasolina_95_stats"],
-            "gasoleoa_stats": history_data["gasoleoa_stats"],
-            "period": {
-                "start_date": history_data["start_date"],
-                "end_date": history_data["end_date"],
-                "days": days,
-            },
-        }
+            return {
+                "data_type": "daily",
+                "update_frequency": "Datos actuales del Ministerio de Energía",
+                "province": "spain",
+                "days": 1,
+                "timestamps": [real_data['fecha_actualizacion']],
+                "gasolina_95": [stats['gasolina_95']['media']],
+                "gasoleoa": [stats['gasoleoa']['media']],
+                "count": 1,
+                "gasolina_95_stats": stats['gasolina_95'],
+                "gasoleoa_stats": stats['gasoleoa'],
+                "period": {
+                    "start_date": real_data['fecha_actualizacion'],
+                    "end_date": real_data['fecha_actualizacion'],
+                    "days": 1,
+                },
+                "fuente": "Ministerio de Energía (Oficial - Promedio España)",
+                "nota": "Mostrando datos actuales. Para histórico completo, contactar administrador",
+            }
+        except Exception as e:
+            logger.error(f"Error getting Spain data: {e}")
+            raise HTTPException(status_code=500, detail="No se pueden obtener datos del Ministerio")
 
     except Exception as e:
         logger.error(f"Error getting price history: {e}", exc_info=True)

@@ -14,7 +14,7 @@ import { FilterButtonsBar } from './FilterButtonsBar';
 import { GasStationsTableDynamic } from './GasStationsTableDynamic';
 import { ComparisonChart } from './ComparisonChart';
 import { StatsCard } from './StatsCard';
-import { ToledoGasStationsMap } from './ToledoGasStationsMap';
+import { ToledoInteractiveMap } from './ToledoInteractiveMap';
 
 export function Dashboard() {
   const [stats, setStats] = useState<any>(null);
@@ -445,9 +445,9 @@ export function Dashboard() {
           </div>
         </div>
 
-        {/* Mapa de Gasolineras de Toledo */}
+        {/* Mapa Interactivo de Gasolineras de Toledo */}
         <div className="mb-12">
-          <ToledoGasStationsMap showBrands={true} />
+          <ToledoInteractiveMap />
         </div>
       </div>
     </div>
