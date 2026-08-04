@@ -96,7 +96,7 @@ async def get_price_history_endpoint(days: int = 90, province: str = "spain"):
         if days > 90:
             days = 90
 
-        # For Toledo: Use REAL data from database (last 90 days) - AGGREGATED BY DAY
+        # For Toledo: Use REAL data from database (last 90 days) - INTERPOLATED DAILY
         if province.lower() == "toledo":
             try:
                 from datetime import timedelta
@@ -124,12 +124,64 @@ async def get_price_history_endpoint(days: int = 90, province: str = "spain"):
                     daily_records = result.all()
 
                     if daily_records:
-                        # Format data for frontend
-                        timestamps = [str(record.date) for record in daily_records]
-                        gasolina_95_values = [float(record.avg_gasolina_95) for record in daily_records]
-                        gasoleoa_values = [float(record.avg_gasoleoa) for record in daily_records]
+                        # Create interpolated daily data (fill gaps between data points)
+                        from datetime import date
+                        timestamps = []
+                        gasolina_95_values = []
+                        gasoleoa_values = []
 
-                        # Calculate statistics
+                        # Get first and last date
+                        first_date = daily_records[0].date
+                        last_date = daily_records[-1].date
+
+                        # Create dict of known values
+                        known_values = {
+                            record.date: (float(record.avg_gasolina_95), float(record.avg_gasoleoa))
+                            for record in daily_records
+                        }
+
+                        # Generate daily data with interpolation
+                        current_date = first_date
+                        while current_date <= last_date:
+                            timestamps.append(str(current_date))
+
+                            if current_date in known_values:
+                                # Use actual data if available
+                                g95, gasoleoa = known_values[current_date]
+                                gasolina_95_values.append(g95)
+                                gasoleoa_values.append(gasoleoa)
+                            else:
+                                # Interpolate between nearest known values
+                                # Find surrounding dates
+                                before_dates = [d for d in known_values.keys() if d < current_date]
+                                after_dates = [d for d in known_values.keys() if d > current_date]
+
+                                if before_dates and after_dates:
+                                    nearest_before = max(before_dates)
+                                    nearest_after = min(after_dates)
+
+                                    g95_before, ga_before = known_values[nearest_before]
+                                    g95_after, ga_after = known_values[nearest_after]
+
+                                    # Linear interpolation
+                                    days_diff = (nearest_after - nearest_before).days
+                                    progress = (current_date - nearest_before).days / days_diff
+
+                                    g95_interp = g95_before + (g95_after - g95_before) * progress
+                                    ga_interp = ga_before + (ga_after - ga_before) * progress
+
+                                    gasolina_95_values.append(round(g95_interp, 4))
+                                    gasoleoa_values.append(round(ga_interp, 4))
+                                else:
+                                    # If can't interpolate, use nearest known value
+                                    nearest = before_dates[-1] if before_dates else after_dates[0]
+                                    g95, gasoleoa = known_values[nearest]
+                                    gasolina_95_values.append(g95)
+                                    gasoleoa_values.append(gasoleoa)
+
+                            current_date += timedelta(days=1)
+
+                        # Calculate statistics from all daily values
                         gasolina_95_min = min(gasolina_95_values)
                         gasolina_95_max = max(gasolina_95_values)
                         gasolina_95_avg = sum(gasolina_95_values) / len(gasolina_95_values)
@@ -146,13 +198,13 @@ async def get_price_history_endpoint(days: int = 90, province: str = "spain"):
 
                         return {
                             "data_type": "daily",
-                            "update_frequency": "Datos históricos reales del Ministerio (agregados por día)",
+                            "update_frequency": "Datos históricos reales del Ministerio (interpolados diariamente)",
                             "province": "toledo",
-                            "days": len(daily_records),
+                            "days": len(timestamps),
                             "timestamps": timestamps,
                             "gasolina_95": gasolina_95_values,
                             "gasoleoa": gasoleoa_values,
-                            "count": len(daily_records),
+                            "count": len(timestamps),
                             "gasolina_95_stats": {
                                 "min": round(gasolina_95_min, 4),
                                 "max": round(gasolina_95_max, 4),
@@ -172,9 +224,9 @@ async def get_price_history_endpoint(days: int = 90, province: str = "spain"):
                             "period": {
                                 "start_date": timestamps[0],
                                 "end_date": timestamps[-1],
-                                "days": len(daily_records),
+                                "days": len(timestamps),
                             },
-                            "fuente": "Base de datos histórica - Ministerio de Energía (Promedio diario)",
+                            "fuente": "Base de datos histórica - Ministerio de Energía (Interpolado diariamente)",
                         }
                     else:
                         # Fallback to current day data if no historical data
