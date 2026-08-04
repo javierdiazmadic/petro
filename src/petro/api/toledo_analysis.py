@@ -114,7 +114,7 @@ def fetch_toledo_data_from_db(filter_type: str = 'todas') -> Optional[Dict[str, 
                   price_gasoleoa,
                   timestamp
                 FROM price
-                WHERE region = 'toledo'
+                WHERE LOWER(region) LIKE 'toledo%'
                 ORDER BY meta_data->>'nombre', timestamp DESC
                 LIMIT 250
             """)
