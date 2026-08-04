@@ -1,0 +1,143 @@
+# Production/Edge Docker Compose: optimizado para Mini PC (16GB RAM, N150)
+# Elimina servicios pesados (ELK, Prometheus+Grafana, MLflow server)
+# Solo: API + DB + Redis + Celery workers + Beat
+
+version: '3.9'
+
+services:
+  db:
+    image: timescaledb/timescaledb:latest-pg16
+    container_name: petro-db-prod
+    environment:
+      POSTGRES_USER: petro
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: petro_prod
+      POSTGRES_INITDB_ARGS: "--compress=9"  # Compression
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U petro"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - petro-prod
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1.5'
+          memory: 4G
+
+  redis:
+    image: redis:7.2-alpine
+    container_name: petro-redis-prod
+    command: redis-server --appendonly yes --maxmemory 2gb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - petro-prod
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 2G
+
+  api:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.api
+    container_name: petro-api-prod
+    environment:
+      ENV: production
+      DEBUG: "False"
+      DATABASE__URL: postgresql+asyncpg://petro:${DB_PASSWORD}@db:5432/petro_prod
+      REDIS__URL: redis://redis:6379/0
+      LOG_LEVEL: INFO
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - petro-prod
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+    command: uvicorn petro.api.main:app --host 0.0.0.0 --port 8000 --workers 2
+
+  worker:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.worker
+    container_name: petro-worker-prod
+    environment:
+      ENV: production
+      DEBUG: "False"
+      DATABASE__URL: postgresql+asyncpg://petro:${DB_PASSWORD}@db:5432/petro_prod
+      REDIS__URL: redis://redis:6379/0
+      LOG_LEVEL: INFO
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - petro-prod
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+    command: celery -A petro.scheduler.app worker --loglevel=info --concurrency=1
+
+  beat:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.beat
+    container_name: petro-beat-prod
+    environment:
+      ENV: production
+      DEBUG: "False"
+      DATABASE__URL: postgresql+asyncpg://petro:${DB_PASSWORD}@db:5432/petro_prod
+      REDIS__URL: redis://redis:6379/0
+      LOG_LEVEL: INFO
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - petro-prod
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1G
+    command: celery -A petro.scheduler.app beat --loglevel=info
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  petro-prod:
+    driver: bridge

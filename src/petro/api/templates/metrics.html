@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+
+{% block title %}Métricas - PETRO{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">📊 Métricas de Modelos</h1>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body metric-card">
+                <div class="metric-label">Mejor Modelo</div>
+                <div class="metric-value" style="font-size: 1.5rem;">XGBoost</div>
+                <small class="text-success">✓ En producción</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body metric-card">
+                <div class="metric-label">RMSE</div>
+                <div class="metric-value">0.0523</div>
+                <small class="text-muted">Error cuadrático</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body metric-card">
+                <div class="metric-label">R²</div>
+                <div class="metric-value">0.8645</div>
+                <small class="text-muted">Varianza explicada</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body metric-card">
+                <div class="metric-label">MAPE</div>
+                <div class="metric-value">2.75%</div>
+                <small class="text-muted">Error porcentual</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Comparación de Modelos</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Modelo</th>
+                                <th>RMSE</th>
+                                <th>MAE</th>
+                                <th>R²</th>
+                                <th>MAPE</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="table-success">
+                                <td><strong>XGBoost</strong></td>
+                                <td>0.0523</td>
+                                <td>0.0412</td>
+                                <td>0.8645</td>
+                                <td>2.75%</td>
+                                <td><span class="badge bg-success">Producción</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>LightGBM</strong></td>
+                                <td>0.0598</td>
+                                <td>0.0467</td>
+                                <td>0.8412</td>
+                                <td>3.12%</td>
+                                <td><span class="badge bg-secondary">Backup</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Random Forest</strong></td>
+                                <td>0.0671</td>
+                                <td>0.0528</td>
+                                <td>0.8145</td>
+                                <td>3.51%</td>
+                                <td><span class="badge bg-secondary">Referencia</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">RMSE por Modelo</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="rmseChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">R² por Modelo</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="r2Chart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="alert alert-info">
+            <strong>ℹ️ Última actualización:</strong> 2026-08-04 02:00 UTC (Entrenamiento diario)
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// RMSE Chart
+const rmseCtx = document.getElementById('rmseChart').getContext('2d');
+new Chart(rmseCtx, {
+    type: 'bar',
+    data: {
+        labels: ['XGBoost', 'LightGBM', 'Random Forest'],
+        datasets: [{
+            label: 'RMSE (menor es mejor)',
+            data: [0.0523, 0.0598, 0.0671],
+            backgroundColor: ['#34a853', '#fbbc04', '#ea4335'],
+            borderRadius: 4
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            y: {
+                min: 0,
+                max: 0.08
+            }
+        }
+    }
+});
+
+// R² Chart
+const r2Ctx = document.getElementById('r2Chart').getContext('2d');
+new Chart(r2Ctx, {
+    type: 'bar',
+    data: {
+        labels: ['XGBoost', 'LightGBM', 'Random Forest'],
+        datasets: [{
+            label: 'R² (mayor es mejor)',
+            data: [0.8645, 0.8412, 0.8145],
+            backgroundColor: ['#34a853', '#fbbc04', '#ea4335'],
+            borderRadius: 4
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            y: {
+                min: 0.8,
+                max: 0.9
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

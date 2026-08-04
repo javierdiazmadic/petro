@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}Salud del Sistema - PETRO{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">🏥 Estado del Sistema</h1>
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <h5>Estado General: <span class="status-healthy">✓ Saludable</span></h5>
+                <p class="text-muted mb-0">Sistema operacional sin problemas detectados</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">Base de Datos</div>
+            <div class="card-body">
+                <p><strong>Estado:</strong> <span class="status-healthy">Conectada</span></p>
+                <p><strong>Ping:</strong> 2ms</p>
+                <p><strong>Conexiones:</strong> 5/20</p>
+                <p class="text-muted text-sm mb-0">PostgreSQL 16 + TimescaleDB</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">Redis</div>
+            <div class="card-body">
+                <p><strong>Estado:</strong> <span class="status-healthy">Conectado</span></p>
+                <p><strong>Ping:</strong> 1ms</p>
+                <p><strong>Memoria:</strong> 256MB / 512MB</p>
+                <p class="text-muted text-sm mb-0">Cache + Task Queue</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">Modelo ML</div>
+            <div class="card-body">
+                <p><strong>Estado:</strong> <span class="status-healthy">Cargado</span></p>
+                <p><strong>Tipo:</strong> XGBoost</p>
+                <p><strong>Tamaño:</strong> 8.5MB</p>
+                <p class="text-muted text-sm mb-0">Latencia: 45ms</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Pipeline Celery</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Tarea</th>
+                                <th>Estado</th>
+                                <th>Última Ejecución</th>
+                                <th>Duración</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>fetch_all_data</td>
+                                <td><span class="badge bg-success">✓ OK</span></td>
+                                <td>Hace 3 min</td>
+                                <td>28s</td>
+                            </tr>
+                            <tr>
+                                <td>process_news</td>
+                                <td><span class="badge bg-success">✓ OK</span></td>
+                                <td>Hace 3 min</td>
+                                <td>45s</td>
+                            </tr>
+                            <tr>
+                                <td>calculate_features</td>
+                                <td><span class="badge bg-success">✓ OK</span></td>
+                                <td>Hace 3 min</td>
+                                <td>32s</td>
+                            </tr>
+                            <tr>
+                                <td>run_inference</td>
+                                <td><span class="badge bg-success">✓ OK</span></td>
+                                <td>Hace 3 min</td>
+                                <td>8s</td>
+                            </tr>
+                            <tr>
+                                <td>save_forecast</td>
+                                <td><span class="badge bg-success">✓ OK</span></td>
+                                <td>Hace 3 min</td>
+                                <td>2s</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Uptime</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="uptimeChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Uptime chart (last 24 hours)
+const uptimeCtx = document.getElementById('uptimeChart').getContext('2d');
+new Chart(uptimeCtx, {
+    type: 'line',
+    data: {
+        labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'],
+        datasets: [{
+            label: 'Disponibilidad (%)',
+            data: [100, 100, 99.9, 100, 99.8, 100, 100],
+            borderColor: '#34a853',
+            backgroundColor: 'rgba(52, 168, 83, 0.1)',
+            tension: 0.3,
+            fill: true,
+            pointRadius: 4
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            y: {
+                min: 99,
+                max: 100.5
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

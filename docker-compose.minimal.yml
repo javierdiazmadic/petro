@@ -1,0 +1,72 @@
+version: '3.9'
+
+# Minimal Docker Compose: solo servicios esenciales (BD, cache, API)
+# Uso: docker-compose -f docker-compose.minimal.yml up
+
+services:
+  db:
+    image: timescaledb/timescaledb:latest-pg16
+    container_name: petro-db
+    environment:
+      POSTGRES_USER: petro
+      POSTGRES_PASSWORD: petro_dev_password
+      POSTGRES_DB: petro_dev
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U petro"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - petro-network
+
+  redis:
+    image: redis:7.2-alpine
+    container_name: petro-redis
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - petro-network
+
+  api:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.api
+    container_name: petro-api
+    environment:
+      ENV: development
+      DEBUG: "True"
+      DATABASE__URL: postgresql+asyncpg://petro:petro_dev_password@db:5432/petro_dev
+      REDIS__URL: redis://redis:6379/0
+      LOG_LEVEL: DEBUG
+    volumes:
+      - ./src:/app/src
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: uvicorn petro.api.main:app --host 0.0.0.0 --port 8000 --reload
+    networks:
+      - petro-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  petro-network:
+    driver: bridge

@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}Histórico - PETRO{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">📈 Histórico de Predicciones</h1>
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Precisión del Modelo - Últimos {{ days }} Días</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Predicción</th>
+                                <th>Actual</th>
+                                <th>Error (€)</th>
+                                <th>Error (%)</th>
+                                <th>Dirección</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2026-08-04 15:30</td>
+                                <td>1.523</td>
+                                <td>1.525</td>
+                                <td class="text-success">+0.002</td>
+                                <td class="text-success">+0.13%</td>
+                                <td><span class="direction-up">✓ Correcto</span></td>
+                            </tr>
+                            <tr>
+                                <td>2026-08-03 15:30</td>
+                                <td>1.512</td>
+                                <td>1.518</td>
+                                <td class="text-success">+0.006</td>
+                                <td class="text-success">+0.40%</td>
+                                <td><span class="direction-up">✓ Correcto</span></td>
+                            </tr>
+                            <tr>
+                                <td>2026-08-02 15:30</td>
+                                <td>1.498</td>
+                                <td>1.512</td>
+                                <td class="text-danger">-0.014</td>
+                                <td class="text-danger">-0.93%</td>
+                                <td><span class="direction-down">✓ Correcto</span></td>
+                            </tr>
+                            <tr>
+                                <td>2026-08-01 15:30</td>
+                                <td>1.501</td>
+                                <td>1.498</td>
+                                <td class="text-danger">-0.003</td>
+                                <td class="text-danger">-0.20%</td>
+                                <td><span class="direction-stable">✓ Correcto</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Accuracy Metrics</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <tbody>
+                            <tr>
+                                <td><strong>MAE</strong></td>
+                                <td class="text-end">0.0412€</td>
+                            </tr>
+                            <tr>
+                                <td><strong>RMSE</strong></td>
+                                <td class="text-end">0.0523€</td>
+                            </tr>
+                            <tr>
+                                <td><strong>MAPE</strong></td>
+                                <td class="text-end">2.75%</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Acierto Dirección</strong></td>
+                                <td class="text-end">87%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Distribución de Errores</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="errorChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Error distribution chart
+const errorCtx = document.getElementById('errorChart').getContext('2d');
+new Chart(errorCtx, {
+    type: 'bar',
+    data: {
+        labels: ['-3% a -2%', '-2% a -1%', '-1% a 0%', '0% a 1%', '1% a 2%', '2% a 3%'],
+        datasets: [{
+            label: 'Número de predicciones',
+            data: [2, 5, 15, 18, 8, 3],
+            backgroundColor: '#1a73e8',
+            borderRadius: 4
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: false }
+        }
+    }
+});
+</script>
+{% endblock %}

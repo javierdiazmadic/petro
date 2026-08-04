@@ -1,0 +1,29 @@
+ARG PYTHON_VERSION=3.12
+
+FROM pytorch/pytorch:${PYTHON_VERSION}-cuda12.1-runtime-ubuntu22.04
+
+WORKDIR /app
+
+# System dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libpq-dev \
+    curl \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
+COPY pyproject.toml .
+RUN pip install --no-cache-dir -e . && \
+    python -m spacy download es_core_news_sm && \
+    python -m spacy download en_core_web_sm
+
+# Copy application code
+COPY . .
+
+# Health check (Celery worker)
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD celery -A petro.scheduler.app inspect active || exit 1
+
+# Run
+CMD ["celery", "-A", "petro.scheduler.app", "worker", "--loglevel=info", "--concurrency=2"]

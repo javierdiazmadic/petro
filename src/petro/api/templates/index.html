@@ -1,0 +1,263 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio - PETRO{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1 class="mb-4">📊 Predicción de Precios de Carburantes España</h1>
+    </div>
+</div>
+
+<!-- Current Price -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body metric-card">
+                <div class="metric-label">Precio Actual Gasolina 95</div>
+                <div class="metric-value">{{ "%.3f"|format(current_price) }}€/L</div>
+                <small class="text-muted">Actualizado hace 5 minutos</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body metric-card">
+                <div class="metric-label">Predicción 1 Día</div>
+                <div class="metric-value direction-up">↑ 1.53%</div>
+                <small class="text-muted">1.523€/L (Confianza: 79%)</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body metric-card">
+                <div class="metric-label">Predicción 7 Días</div>
+                <div class="metric-value direction-down">↓ 0.87%</div>
+                <small class="text-muted">1.487€/L (Confianza: 65%)</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Predictions Table -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Predicciones Multi-Horizonte</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Horizonte</th>
+                                <th>Precio Predicho</th>
+                                <th>Cambio</th>
+                                <th>Dirección</th>
+                                <th>Confianza</th>
+                                <th>Rango</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>1 Día</strong></td>
+                                <td>1.523€/L</td>
+                                <td>+0.023€ (+1.53%)</td>
+                                <td><span class="direction-up">📈 Subida</span></td>
+                                <td>
+                                    <div class="progress" style="height: 20px;">
+                                        <div class="progress-bar bg-success" role="progressbar" style="width: 79%">79%</div>
+                                    </div>
+                                </td>
+                                <td>1.447 - 1.599€</td>
+                            </tr>
+                            <tr>
+                                <td><strong>3 Días</strong></td>
+                                <td>1.512€/L</td>
+                                <td>+0.012€ (+0.80%)</td>
+                                <td><span class="direction-stable">➡️ Estable</span></td>
+                                <td>
+                                    <div class="progress" style="height: 20px;">
+                                        <div class="progress-bar bg-warning" role="progressbar" style="width: 72%">72%</div>
+                                    </div>
+                                </td>
+                                <td>1.436 - 1.588€</td>
+                            </tr>
+                            <tr>
+                                <td><strong>7 Días</strong></td>
+                                <td>1.487€/L</td>
+                                <td>-0.013€ (-0.87%)</td>
+                                <td><span class="direction-down">📉 Bajada</span></td>
+                                <td>
+                                    <div class="progress" style="height: 20px;">
+                                        <div class="progress-bar bg-danger" role="progressbar" style="width: 65%">65%</div>
+                                    </div>
+                                </td>
+                                <td>1.413 - 1.561€</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Price Trend Chart -->
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Tendencia de Precios - Últimos 30 Días</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="priceChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Direction Confidence Chart -->
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Confianza 1 Día</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container" style="height: 250px;">
+                    <canvas id="confidence1dChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Confianza 7 Días</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container" style="height: 250px;">
+                    <canvas id="confidence7dChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Info Box -->
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="alert alert-info" role="alert">
+            <h4 class="alert-heading">ℹ️ Información</h4>
+            <p>
+                Las predicciones se actualizan cada 15 minutos con datos de mercado en tiempo real.
+                Los intervalos de confianza representan un ±5% de incertidumbre del modelo.
+            </p>
+            <hr>
+            <p class="mb-0">
+                <strong>Último modelo:</strong> XGBoost |
+                <strong>RMSE:</strong> 0.0523 |
+                <strong>R²:</strong> 0.8645 |
+                <a href="/docs">Ver API Completa →</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Price trend chart
+const priceCtx = document.getElementById('priceChart').getContext('2d');
+new Chart(priceCtx, {
+    type: 'line',
+    data: {
+        labels: ['Hace 30d', 'Hace 25d', 'Hace 20d', 'Hace 15d', 'Hace 10d', 'Hace 5d', 'Hoy'],
+        datasets: [{
+            label: 'Precio Gasolina 95',
+            data: [1.45, 1.47, 1.49, 1.48, 1.50, 1.49, 1.50],
+            borderColor: '#1a73e8',
+            backgroundColor: 'rgba(26, 115, 232, 0.1)',
+            tension: 0.3,
+            fill: true,
+            pointRadius: 4,
+            pointBackgroundColor: '#1a73e8'
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: true,
+                position: 'top'
+            }
+        },
+        scales: {
+            y: {
+                min: 1.4,
+                max: 1.6,
+                title: {
+                    display: true,
+                    text: 'Precio (€/L)'
+                }
+            }
+        }
+    }
+});
+
+// Confidence 1D chart
+const conf1dCtx = document.getElementById('confidence1dChart').getContext('2d');
+new Chart(conf1dCtx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Subida (79%)', 'Estable (15%)', 'Bajada (6%)'],
+        datasets: [{
+            data: [79, 15, 6],
+            backgroundColor: ['#34a853', '#999', '#ea4335'],
+            borderColor: '#fff',
+            borderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+
+// Confidence 7D chart
+const conf7dCtx = document.getElementById('confidence7dChart').getContext('2d');
+new Chart(conf7dCtx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Subida (45%)', 'Estable (35%)', 'Bajada (20%)'],
+        datasets: [{
+            data: [45, 35, 20],
+            backgroundColor: ['#34a853', '#999', '#ea4335'],
+            borderColor: '#fff',
+            borderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

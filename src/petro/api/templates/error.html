@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Error - PETRO{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="alert alert-danger" role="alert">
+            <h4 class="alert-heading">⚠️ Error</h4>
+            <p>{{ error }}</p>
+            <hr>
+            <p class="mb-0">
+                <a href="/" class="btn btn-primary">Volver al Inicio</a>
+                <a href="/api/v1/health" class="btn btn-secondary">Chequear Salud</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
