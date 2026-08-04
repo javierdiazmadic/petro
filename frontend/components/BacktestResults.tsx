@@ -38,50 +38,50 @@ export function BacktestResults({ data, metrics }: BacktestResultsProps) {
   const interval = Math.max(0, Math.floor(data.length / 15));
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-8">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-        <span className="text-2xl">✅</span> Validación del Modelo (Backtesting)
+    <div className="bg-white rounded-xl shadow-lg p-10 mb-12">
+      <h2 className="text-4xl font-bold text-gray-900 mb-8 flex items-center gap-3">
+        <span className="text-4xl">✅</span> Validación del Modelo (Backtesting)
       </h2>
 
       {/* Metrics Summary */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-        <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-lg border border-green-200">
-          <p className="text-xs text-gray-600 font-medium">MAE (€/L)</p>
-          <p className="text-2xl font-bold text-green-600">{metrics?.mae?.toFixed(4) || 'N/A'}</p>
-          <p className="text-xs text-gray-500 mt-1">Error Medio</p>
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-10">
+        <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-lg border-2 border-green-200">
+          <p className="text-sm text-gray-700 font-bold">MAE (€/L)</p>
+          <p className="text-4xl font-bold text-green-600 my-2">{metrics?.mae?.toFixed(4) || 'N/A'}</p>
+          <p className="text-sm text-gray-600">Error Medio Absoluto</p>
         </div>
 
-        <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-4 rounded-lg border border-blue-200">
-          <p className="text-xs text-gray-600 font-medium">MAPE (%)</p>
-          <p className="text-2xl font-bold text-blue-600">{metrics?.mape?.toFixed(2) || 'N/A'}%</p>
-          <p className="text-xs text-gray-500 mt-1">Error Porcentual</p>
+        <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-6 rounded-lg border-2 border-blue-200">
+          <p className="text-sm text-gray-700 font-bold">MAPE (%)</p>
+          <p className="text-4xl font-bold text-blue-600 my-2">{metrics?.mape?.toFixed(2) || 'N/A'}%</p>
+          <p className="text-sm text-gray-600">Error Porcentual Medio</p>
         </div>
 
-        <div className="bg-gradient-to-br from-purple-50 to-indigo-50 p-4 rounded-lg border border-purple-200">
-          <p className="text-xs text-gray-600 font-medium">RMSE</p>
-          <p className="text-2xl font-bold text-purple-600">{metrics?.rmse?.toFixed(4) || 'N/A'}</p>
-          <p className="text-xs text-gray-500 mt-1">Raíz del Error</p>
+        <div className="bg-gradient-to-br from-purple-50 to-indigo-50 p-6 rounded-lg border-2 border-purple-200">
+          <p className="text-sm text-gray-700 font-bold">RMSE</p>
+          <p className="text-4xl font-bold text-purple-600 my-2">{metrics?.rmse?.toFixed(4) || 'N/A'}</p>
+          <p className="text-sm text-gray-600">Raíz Error Cuadrado Medio</p>
         </div>
 
-        <div className="bg-gradient-to-br from-orange-50 to-amber-50 p-4 rounded-lg border border-orange-200">
-          <p className="text-xs text-gray-600 font-medium">R² Score</p>
-          <p className="text-2xl font-bold text-orange-600">{metrics?.r_squared?.toFixed(3) || 'N/A'}</p>
-          <p className="text-xs text-gray-500 mt-1">Bondad del Ajuste</p>
+        <div className="bg-gradient-to-br from-orange-50 to-amber-50 p-6 rounded-lg border-2 border-orange-200">
+          <p className="text-sm text-gray-700 font-bold">R² Score</p>
+          <p className="text-4xl font-bold text-orange-600 my-2">{metrics?.r_squared?.toFixed(3) || 'N/A'}</p>
+          <p className="text-sm text-gray-600">Bondad del Ajuste</p>
         </div>
 
-        <div className="bg-gradient-to-br from-pink-50 to-rose-50 p-4 rounded-lg border border-pink-200">
-          <p className="text-xs text-gray-600 font-medium">Precisión Dirección</p>
-          <p className="text-2xl font-bold text-pink-600">{metrics?.direction_accuracy?.toFixed(1) || 'N/A'}%</p>
-          <p className="text-xs text-gray-500 mt-1">↑↓ Tendencia</p>
+        <div className="bg-gradient-to-br from-pink-50 to-rose-50 p-6 rounded-lg border-2 border-pink-200">
+          <p className="text-sm text-gray-700 font-bold">Precisión Dir.</p>
+          <p className="text-4xl font-bold text-pink-600 my-2">{metrics?.direction_accuracy?.toFixed(1) || 'N/A'}%</p>
+          <p className="text-sm text-gray-600">Precisión Tendencia</p>
         </div>
       </div>
 
       {/* Historical Comparison Chart */}
-      <div className="bg-gray-50 p-6 rounded-lg mb-8">
-        <p className="text-sm text-gray-600 mb-4">
-          📊 Comparativa: Precios Predichos vs Reales ({metrics?.period_days} días)
+      <div className="bg-gray-50 p-8 rounded-lg mb-10">
+        <p className="text-lg text-gray-800 font-bold mb-6">
+          📊 Comparativa Detallada: Precios Predichos vs Reales ({metrics?.period_days} días)
         </p>
-        <ResponsiveContainer width="100%" height={350}>
+        <ResponsiveContainer width="100%" height={550}>
           <LineChart
             data={data}
             margin={{ top: 5, right: 30, left: 0, bottom: 5 }}
@@ -120,30 +120,44 @@ export function BacktestResults({ data, metrics }: BacktestResultsProps) {
               type="monotone"
               dataKey="actual_price"
               stroke="#10b981"
-              strokeWidth={3}
+              strokeWidth={4}
               name="Precio Real"
               dot={false}
+              isAnimationActive={true}
             />
             <Line
               type="monotone"
               dataKey="predicted_price"
               stroke="#f59e0b"
-              strokeWidth={2}
+              strokeWidth={4}
               strokeDasharray="5 5"
               name="Precio Predicho"
               dot={false}
+              isAnimationActive={true}
             />
           </LineChart>
         </ResponsiveContainer>
       </div>
 
       {/* Interpretation */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <h3 className="font-bold text-blue-900 mb-2">📌 Interpretación</h3>
-        <p className="text-sm text-blue-800">
-          El modelo tiene un MAE de €{metrics?.mae?.toFixed(4)}/L (error medio absoluto) y un MAPE del {metrics?.mape?.toFixed(2)}% en el período analizado.
-          La precisión de dirección del {metrics?.direction_accuracy?.toFixed(1)}% indica que el modelo predice correctamente si el precio subirá o bajará en {metrics?.direction_accuracy?.toFixed(1)}% de los casos.
-        </p>
+      <div className="bg-blue-50 border-2 border-blue-300 rounded-lg p-8">
+        <h3 className="font-bold text-2xl text-blue-900 mb-4 flex items-center gap-2">
+          <span>📌</span> Análisis e Interpretación
+        </h3>
+        <div className="space-y-3 text-blue-900">
+          <p className="text-base">
+            <strong>Error Absoluto Medio (MAE):</strong> €{metrics?.mae?.toFixed(4)}/L - El modelo se desvía en promedio esta cantidad del precio real.
+          </p>
+          <p className="text-base">
+            <strong>Error Porcentual Medio (MAPE):</strong> {metrics?.mape?.toFixed(2)}% - Desviación relativa respecto al precio real.
+          </p>
+          <p className="text-base">
+            <strong>Precisión de Dirección:</strong> {metrics?.direction_accuracy?.toFixed(1)}% - El modelo predice correctamente si el precio subirá o bajará.
+          </p>
+          <p className="text-base">
+            <strong>R² Score:</strong> {metrics?.r_squared?.toFixed(3)} - Indica que el modelo explica el {(metrics?.r_squared * 100)?.toFixed(1)}% de la varianza en los precios.
+          </p>
+        </div>
       </div>
     </div>
   );
