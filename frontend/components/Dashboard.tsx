@@ -72,9 +72,17 @@ export function Dashboard() {
       if (priceRes?.data) {
         setPriceHistory(priceRes.data);
 
-        // Convertir timestamps a formato de fecha (solo día/mes)
+        // Convertir timestamps a formato de fecha (día/mes) - robusto para diferentes formatos
         const chartData = priceRes.data.timestamps?.map((ts: string, idx: number) => {
-          const date = new Date(ts);
+          let date;
+          if (ts.includes('T')) {
+            // ISO format: "2026-05-06T14:35:09.868487"
+            date = new Date(ts);
+          } else {
+            // Date format: "2026-06-01"
+            date = new Date(ts + 'T00:00:00');
+          }
+
           return {
             date: date.toLocaleDateString('es-ES', { month: 'short', day: 'numeric' }),
             fullDate: ts,
@@ -99,7 +107,9 @@ export function Dashboard() {
 
     const load = async () => {
       if (mounted) {
+        setLoading(true);
         await fetchData(selectedProvince);
+        setLoading(false);
       }
     };
 
