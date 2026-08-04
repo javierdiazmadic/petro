@@ -69,6 +69,15 @@ app.conf.beat_schedule = {
             "expires": 3600,
         },
     },
+    "full-pipeline-every-2-days": {
+        "task": "petro.scheduler.tasks.full_pipeline_every_2_days",
+        "schedule": crontab(hour=3, minute=0, day_of_week="0,2,4"),  # Every 2 days (Mon, Wed, Fri) at 3:00 AM UTC
+        "options": {
+            "queue": "training",
+            "priority": 10,
+            "expires": 7200,  # 2 hours
+        },
+    },
 }
 
 # Optional: Celery Beat schedule with timezone awareness
