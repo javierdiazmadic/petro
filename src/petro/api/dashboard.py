@@ -96,23 +96,38 @@ async def get_price_history_endpoint(days: int = 90, province: str = "spain"):
         if days > 90:
             days = 90
 
-        # For Toledo: Use REAL data from database (last 90 days)
+        # For Toledo: Use REAL data from database (last 90 days) - AGGREGATED BY DAY
         if province.lower() == "toledo":
             try:
                 from datetime import timedelta
-                async with AsyncSessionLocal() as session:
-                    # Get last N days of price data from database
-                    cutoff_date = datetime.utcnow() - timedelta(days=days)
-                    stmt = select(Price).where(
-                        Price.timestamp >= cutoff_date
-                    ).order_by(Price.timestamp)
-                    result = await session.execute(stmt)
-                    price_records = result.scalars().all()
+                from sqlalchemy import cast, Date
+                from sqlalchemy.orm import aliased
 
-                    if price_records:
-                        timestamps = [p.timestamp.isoformat() for p in price_records]
-                        gasolina_95_values = [float(p.price_gasolina_95) for p in price_records]
-                        gasoleoa_values = [float(p.price_gasoleoa) for p in price_records]
+                async with AsyncSessionLocal() as session:
+                    # Get last N days of price data from database, aggregated by DATE
+                    cutoff_date = datetime.utcnow() - timedelta(days=days)
+
+                    # Aggregate by day: take average price for each day
+                    stmt = select(
+                        cast(Price.timestamp, Date).label('date'),
+                        func.avg(Price.price_gasolina_95).label('avg_gasolina_95'),
+                        func.avg(Price.price_gasoleoa).label('avg_gasoleoa'),
+                    ).where(
+                        Price.timestamp >= cutoff_date
+                    ).group_by(
+                        cast(Price.timestamp, Date)
+                    ).order_by(
+                        cast(Price.timestamp, Date)
+                    )
+
+                    result = await session.execute(stmt)
+                    daily_records = result.all()
+
+                    if daily_records:
+                        # Format data for frontend
+                        timestamps = [str(record.date) for record in daily_records]
+                        gasolina_95_values = [float(record.avg_gasolina_95) for record in daily_records]
+                        gasoleoa_values = [float(record.avg_gasoleoa) for record in daily_records]
 
                         # Calculate statistics
                         gasolina_95_min = min(gasolina_95_values)
@@ -131,13 +146,13 @@ async def get_price_history_endpoint(days: int = 90, province: str = "spain"):
 
                         return {
                             "data_type": "daily",
-                            "update_frequency": "Datos históricos reales del Ministerio",
+                            "update_frequency": "Datos históricos reales del Ministerio (agregados por día)",
                             "province": "toledo",
-                            "days": len(price_records),
+                            "days": len(daily_records),
                             "timestamps": timestamps,
                             "gasolina_95": gasolina_95_values,
                             "gasoleoa": gasoleoa_values,
-                            "count": len(price_records),
+                            "count": len(daily_records),
                             "gasolina_95_stats": {
                                 "min": round(gasolina_95_min, 4),
                                 "max": round(gasolina_95_max, 4),
@@ -157,9 +172,9 @@ async def get_price_history_endpoint(days: int = 90, province: str = "spain"):
                             "period": {
                                 "start_date": timestamps[0],
                                 "end_date": timestamps[-1],
-                                "days": len(price_records),
+                                "days": len(daily_records),
                             },
-                            "fuente": "Base de datos histórica - Ministerio de Energía",
+                            "fuente": "Base de datos histórica - Ministerio de Energía (Promedio diario)",
                         }
                     else:
                         # Fallback to current day data if no historical data
