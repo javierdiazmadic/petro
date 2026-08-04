@@ -1,6 +1,6 @@
 ARG PYTHON_VERSION=3.12
 
-FROM pytorch/pytorch:${PYTHON_VERSION}-cuda12.1-runtime-ubuntu22.04
+FROM python:${PYTHON_VERSION}-slim
 
 WORKDIR /app
 
@@ -12,14 +12,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     && rm -rf /var/lib/apt/lists/*
 
+# Copy all code
+COPY . .
+
 # Install Python dependencies
-COPY pyproject.toml .
 RUN pip install --no-cache-dir -e . && \
     python -m spacy download es_core_news_sm && \
     python -m spacy download en_core_web_sm
-
-# Copy application code
-COPY . .
 
 # Health check (Celery worker)
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \

@@ -18,7 +18,7 @@ from petro.api.schemas import (
     ConfidenceScores,
     ConfidenceBounds,
 )
-from petro.infrastructure.db.session import async_session_local
+from petro.infrastructure.db.session import AsyncSessionLocal
 from petro.infrastructure.db.repositories import BaseRepository
 from petro.infrastructure.db.models import Forecast, Price
 from petro.ml.inference import InferencePipeline
@@ -32,7 +32,7 @@ router = APIRouter(prefix="/api/v1", tags=["predictions"])
 
 async def get_db() -> AsyncSession:
     """Get database session."""
-    async with async_session_local() as session:
+    async with AsyncSessionLocal() as session:
         yield session
 
 

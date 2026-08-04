@@ -41,7 +41,7 @@ class InferencePipeline:
             # Load model
             model, metadata = self.loader.load_production_model(experiment_name)
             if model is None:
-                logger.error("Failed to load model")
+                logger.debug("Model not available yet (normal at startup before training)")
                 return False
 
             # Initialize predictor

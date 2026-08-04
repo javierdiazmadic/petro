@@ -1,0 +1,729 @@
+{
+  "metadata": {
+    "generated_at": "2026-08-04T13:44:30.689481",
+    "analysis_date": "2026-08-04T00:00:00",
+    "location": "Toledo, Spain",
+    "analysis_period": "2025-08-01 to 2026-08-04"
+  },
+  "executive_summary": {
+    "current_prices": {
+      "gasolina_95_eur_per_liter": 1.4866,
+      "gasoleoa_eur_per_liter": 1.6158,
+      "date": "2026-08-04T00:00:00"
+    },
+    "predicted_7_day": {
+      "gasolina_95": 1.4657,
+      "gasoleoa": 1.5998,
+      "gasolina_trend": "DOWN",
+      "gasoleoa_trend": "DOWN"
+    }
+  },
+  "historical_analysis": {
+    "min_prices": {
+      "gasolina_95": 1.3925,
+      "gasoleoa": 1.5017,
+      "date": "2025-10-19T00:00:00"
+    },
+    "max_prices": {
+      "gasolina_95": 1.5577,
+      "gasoleoa": 1.6748,
+      "date": "2026-04-12T00:00:00"
+    },
+    "average_prices": {
+      "gasolina_95": 1.4794,
+      "gasoleoa": 1.5943
+    },
+    "volatility_std": {
+      "gasolina_95": 0.0364,
+      "gasoleoa": 0.0426
+    }
+  },
+  "backtest_results": {
+    "gasolina_95": {
+      "rmse": 0.005455,
+      "mae": 0.004146,
+      "accuracy_5cents": 100.0,
+      "predictions_correct": 65
+    },
+    "gasoleoa": {
+      "rmse": 0.006733,
+      "mae": 0.004977,
+      "accuracy_5cents": 100.0,
+      "predictions_correct": 65
+    }
+  },
+  "future_predictions": {
+    "next_7_days": [
+      {
+        "date": "2026-08-05 00:00:00",
+        "gasolina_95_pred": 1.5018256930263831,
+        "gasolina_95_ci_lower_80": 1.469825693026383,
+        "gasolina_95_ci_upper_80": 1.5338256930263832,
+        "gasolina_95_ci_lower_95": 1.4528256930263832,
+        "gasolina_95_ci_upper_95": 1.550825693026383,
+        "gasolina_prob_increase": 1.0,
+        "gasoleoa_pred": 1.597229964348871,
+        "gasoleoa_ci_lower_80": 1.565229964348871,
+        "gasoleoa_ci_upper_80": 1.629229964348871,
+        "gasoleoa_ci_lower_95": 1.548229964348871,
+        "gasoleoa_ci_upper_95": 1.646229964348871,
+        "gasoleoa_prob_increase": 0.0
+      },
+      {
+        "date": "2026-08-06 00:00:00",
+        "gasolina_95_pred": 1.4914214603285592,
+        "gasolina_95_ci_lower_80": 1.4594214603285591,
+        "gasolina_95_ci_upper_80": 1.5234214603285592,
+        "gasolina_95_ci_lower_95": 1.4424214603285592,
+        "gasolina_95_ci_upper_95": 1.540421460328559,
+        "gasolina_prob_increase": 1.0,
+        "gasoleoa_pred": 1.6295898522035879,
+        "gasoleoa_ci_lower_80": 1.5975898522035878,
+        "gasoleoa_ci_upper_80": 1.661589852203588,
+        "gasoleoa_ci_lower_95": 1.580589852203588,
+        "gasoleoa_ci_upper_95": 1.6785898522035878,
+        "gasoleoa_prob_increase": 1.0
+      },
+      {
+        "date": "2026-08-07 00:00:00",
+        "gasolina_95_pred": 1.4761771079879002,
+        "gasolina_95_ci_lower_80": 1.4441771079879002,
+        "gasolina_95_ci_upper_80": 1.5081771079879003,
+        "gasolina_95_ci_lower_95": 1.4271771079879003,
+        "gasolina_95_ci_upper_95": 1.5251771079879002,
+        "gasolina_prob_increase": 0.0,
+        "gasoleoa_pred": 1.6118240453455357,
+        "gasoleoa_ci_lower_80": 1.5798240453455357,
+        "gasoleoa_ci_upper_80": 1.6438240453455357,
+        "gasoleoa_ci_lower_95": 1.5628240453455358,
+        "gasoleoa_ci_upper_95": 1.6608240453455356,
+        "gasoleoa_prob_increase": 0.0
+      },
+      {
+        "date": "2026-08-08 00:00:00",
+        "gasolina_95_pred": 1.475056438508669,
+        "gasolina_95_ci_lower_80": 1.443056438508669,
+        "gasolina_95_ci_upper_80": 1.507056438508669,
+        "gasolina_95_ci_lower_95": 1.4260564385086691,
+        "gasolina_95_ci_upper_95": 1.524056438508669,
+        "gasolina_prob_increase": 0.0,
+        "gasoleoa_pred": 1.6210729853530044,
+        "gasoleoa_ci_lower_80": 1.5890729853530043,
+        "gasoleoa_ci_upper_80": 1.6530729853530044,
+        "gasoleoa_ci_lower_95": 1.5720729853530044,
+        "gasoleoa_ci_upper_95": 1.6700729853530043,
+        "gasoleoa_prob_increase": 1.0
+      },
+      {
+        "date": "2026-08-09 00:00:00",
+        "gasolina_95_pred": 1.4650944212241832,
+        "gasolina_95_ci_lower_80": 1.4330944212241832,
+        "gasolina_95_ci_upper_80": 1.4970944212241832,
+        "gasolina_95_ci_lower_95": 1.4160944212241833,
+        "gasolina_95_ci_upper_95": 1.5140944212241831,
+        "gasolina_prob_increase": 0.0,
+        "gasoleoa_pred": 1.601646775731658,
+        "gasoleoa_ci_lower_80": 1.569646775731658,
+        "gasoleoa_ci_upper_80": 1.633646775731658,
+        "gasoleoa_ci_lower_95": 1.552646775731658,
+        "gasoleoa_ci_upper_95": 1.6506467757316579,
+        "gasoleoa_prob_increase": 0.0
+      },
+      {
+        "date": "2026-08-10 00:00:00",
+        "gasolina_95_pred": 1.502147199784412,
+        "gasolina_95_ci_lower_80": 1.470147199784412,
+        "gasolina_95_ci_upper_80": 1.534147199784412,
+        "gasolina_95_ci_lower_95": 1.453147199784412,
+        "gasolina_95_ci_upper_95": 1.551147199784412,
+        "gasolina_prob_increase": 1.0,
+        "gasoleoa_pred": 1.5846592791497152,
+        "gasoleoa_ci_lower_80": 1.5526592791497151,
+        "gasoleoa_ci_upper_80": 1.6166592791497152,
+        "gasoleoa_ci_lower_95": 1.5356592791497152,
+        "gasoleoa_ci_upper_95": 1.633659279149715,
+        "gasoleoa_prob_increase": 0.0
+      },
+      {
+        "date": "2026-08-11 00:00:00",
+        "gasolina_95_pred": 1.4656630465271139,
+        "gasolina_95_ci_lower_80": 1.4336630465271138,
+        "gasolina_95_ci_upper_80": 1.497663046527114,
+        "gasolina_95_ci_lower_95": 1.416663046527114,
+        "gasolina_95_ci_upper_95": 1.5146630465271138,
+        "gasolina_prob_increase": 0.0,
+        "gasoleoa_pred": 1.5998065897607714,
+        "gasoleoa_ci_lower_80": 1.5678065897607714,
+        "gasoleoa_ci_upper_80": 1.6318065897607714,
+        "gasoleoa_ci_lower_95": 1.5508065897607715,
+        "gasoleoa_ci_upper_95": 1.6488065897607713,
+        "gasoleoa_prob_increase": 0.0
+      }
+    ],
+    "next_30_days": [
+      {
+        "date": "2026-08-05 00:00:00",
+        "gasolina_95_pred": 1.5018256930263831,
+        "gasolina_95_ci_lower_80": 1.469825693026383,
+        "gasolina_95_ci_upper_80": 1.5338256930263832,
+        "gasolina_95_ci_lower_95": 1.4528256930263832,
+        "gasolina_95_ci_upper_95": 1.550825693026383,
+        "gasolina_prob_increase": 1.0,
+        "gasoleoa_pred": 1.597229964348871,
+        "gasoleoa_ci_lower_80": 1.565229964348871,
+        "gasoleoa_ci_upper_80": 1.629229964348871,
+        "gasoleoa_ci_lower_95": 1.548229964348871,
+        "gasoleoa_ci_upper_95": 1.646229964348871,
+        "gasoleoa_prob_increase": 0.0
+      },
+      {
+        "date": "2026-08-06 00:00:00",
+        "gasolina_95_pred": 1.4914214603285592,
+        "gasolina_95_ci_lower_80": 1.4594214603285591,
+        "gasolina_95_ci_upper_80": 1.5234214603285592,
+        "gasolina_95_ci_lower_95": 1.4424214603285592,
+        "gasolina_95_ci_upper_95": 1.540421460328559,
+        "gasolina_prob_increase": 1.0,
+        "gasoleoa_pred": 1.6295898522035879,
+        "gasoleoa_ci_lower_80": 1.5975898522035878,
+        "gasoleoa_ci_upper_80": 1.661589852203588,
+        "gasoleoa_ci_lower_95": 1.580589852203588,
+        "gasoleoa_ci_upper_95": 1.6785898522035878,
+        "gasoleoa_prob_increase": 1.0
+      },
+      {
+        "date": "2026-08-07 00:00:00",
+        "gasolina_95_pred": 1.4761771079879002,
+        "gasolina_95_ci_lower_80": 1.4441771079879002,
+        "gasolina_95_ci_upper_80": 1.5081771079879003,
+        "gasolina_95_ci_lower_95": 1.4271771079879003,
+        "gasolina_95_ci_upper_95": 1.5251771079879002,
+        "gasolina_prob_increase": 0.0,
+        "gasoleoa_pred": 1.6118240453455357,
+        "gasoleoa_ci_lower_80": 1.5798240453455357,
+        "gasoleoa_ci_upper_80": 1.6438240453455357,
+        "gasoleoa_ci_lower_95": 1.5628240453455358,
+        "gasoleoa_ci_upper_95": 1.6608240453455356,
+        "gasoleoa_prob_increase": 0.0
+      },
+      {
+        "date": "2026-08-08 00:00:00",
+        "gasolina_95_pred": 1.475056438508669,
+        "gasolina_95_ci_lower_80": 1.443056438508669,
+        "gasolina_95_ci_upper_80": 1.507056438508669,
+        "gasolina_95_ci_lower_95": 1.4260564385086691,
+        "gasolina_95_ci_upper_95": 1.524056438508669,
+        "gasolina_prob_increase": 0.0,
+        "gasoleoa_pred": 1.6210729853530044,
+        "gasoleoa_ci_lower_80": 1.5890729853530043,
+        "gasoleoa_ci_upper_80": 1.6530729853530044,
+        "gasoleoa_ci_lower_95": 1.5720729853530044,
+        "gasoleoa_ci_upper_95": 1.6700729853530043,
+        "gasoleoa_prob_increase": 1.0
+      },
+      {
+        "date": "2026-08-09 00:00:00",
+        "gasolina_95_pred": 1.4650944212241832,
+        "gasolina_95_ci_lower_80": 1.4330944212241832,
+        "gasolina_95_ci_upper_80": 1.4970944212241832,
+        "gasolina_95_ci_lower_95": 1.4160944212241833,
+        "gasolina_95_ci_upper_95": 1.5140944212241831,
+        "gasolina_prob_increase": 0.0,
+        "gasoleoa_pred": 1.601646775731658,
+        "gasoleoa_ci_lower_80": 1.569646775731658,
+        "gasoleoa_ci_upper_80": 1.633646775731658,
+        "gasoleoa_ci_lower_95": 1.552646775731658,
+        "gasoleoa_ci_upper_95": 1.6506467757316579,
+        "gasoleoa_prob_increase": 0.0
+      },
+      {
+        "date": "2026-08-10 00:00:00",
+        "gasolina_95_pred": 1.502147199784412,
+        "gasolina_95_ci_lower_80": 1.470147199784412,
+        "gasolina_95_ci_upper_80": 1.534147199784412,
+        "gasolina_95_ci_lower_95": 1.453147199784412,
+        "gasolina_95_ci_upper_95": 1.551147199784412,
+        "gasolina_prob_increase": 1.0,
+        "gasoleoa_pred": 1.5846592791497152,
+        "gasoleoa_ci_lower_80": 1.5526592791497151,
+        "gasoleoa_ci_upper_80": 1.6166592791497152,
+        "gasoleoa_ci_lower_95": 1.5356592791497152,
+        "gasoleoa_ci_upper_95": 1.633659279149715,
+        "gasoleoa_prob_increase": 0.0
+      },
+      {
+        "date": "2026-08-11 00:00:00",
+        "gasolina_95_pred": 1.4656630465271139,
+        "gasolina_95_ci_lower_80": 1.4336630465271138,
+        "gasolina_95_ci_upper_80": 1.497663046527114,
+        "gasolina_95_ci_lower_95": 1.416663046527114,
+        "gasolina_95_ci_upper_95": 1.5146630465271138,
+        "gasolina_prob_increase": 0.0,
+        "gasoleoa_pred": 1.5998065897607714,
+        "gasoleoa_ci_lower_80": 1.5678065897607714,
+        "gasoleoa_ci_upper_80": 1.6318065897607714,
+        "gasoleoa_ci_lower_95": 1.5508065897607715,
+        "gasoleoa_ci_upper_95": 1.6488065897607713,
+        "gasoleoa_prob_increase": 0.0
+      },
+      {
+        "date": "2026-08-12 00:00:00",
+        "gasolina_95_pred": 1.4970282419583525,
+        "gasolina_95_ci_lower_80": 1.4650282419583525,
+        "gasolina_95_ci_upper_80": 1.5290282419583525,
+        "gasolina_95_ci_lower_95": 1.4480282419583526,
+        "gasolina_95_ci_upper_95": 1.5460282419583524,
+        "gasolina_prob_increase": 1.0,
+        "gasoleoa_pred": 1.6447186359350563,
+        "gasoleoa_ci_lower_80": 1.6127186359350563,
+        "gasoleoa_ci_upper_80": 1.6767186359350563,
+        "gasoleoa_ci_lower_95": 1.5957186359350564,
+        "gasoleoa_ci_upper_95": 1.6937186359350562,
+        "gasoleoa_prob_increase": 1.0
+      },
+      {
+        "date": "2026-08-13 00:00:00",
+        "gasolina_95_pred": 1.4701492000588212,
+        "gasolina_95_ci_lower_80": 1.4381492000588212,
+        "gasolina_95_ci_upper_80": 1.5021492000588212,
+        "gasolina_95_ci_lower_95": 1.4211492000588213,
+        "gasolina_95_ci_upper_95": 1.5191492000588211,
+        "gasolina_prob_increase": 0.0,
+        "gasoleoa_pred": 1.6123462332257792,
+        "gasoleoa_ci_lower_80": 1.5803462332257792,
+        "gasoleoa_ci_upper_80": 1.6443462332257792,
+        "gasoleoa_ci_lower_95": 1.5633462332257793,
+        "gasoleoa_ci_upper_95": 1.6613462332257791,
+        "gasoleoa_prob_increase": 0.0
+      },
+      {
+        "date": "2026-08-14 00:00:00",
+        "gasolina_95_pred": 1.507105366299749,
+        "gasolina_95_ci_lower_80": 1.4751053662997489,
+        "gasolina_95_ci_upper_80": 1.539105366299749,
+        "gasolina_95_ci_lower_95": 1.458105366299749,
+        "gasolina_95_ci_upper_95": 1.5561053662997488,
+        "gasolina_prob_increase": 1.0,
+        "gasoleoa_pred": 1.6524302669878859,
+        "gasoleoa_ci_lower_80": 1.6204302669878858,
+        "gasoleoa_ci_upper_80": 1.684430266987886,
+        "gasoleoa_ci_lower_95": 1.603430266987886,
+        "gasoleoa_ci_upper_95": 1.7014302669878858,
+        "gasoleoa_prob_increase": 1.0
+      },
+      {
+        "date": "2026-08-15 00:00:00",
+        "gasolina_95_pred": 1.4866056854068177,
+        "gasolina_95_ci_lower_80": 1.4546056854068177,
+        "gasolina_95_ci_upper_80": 1.5186056854068177,
+        "gasolina_95_ci_lower_95": 1.4376056854068178,
+        "gasolina_95_ci_upper_95": 1.5356056854068176,
+        "gasolina_prob_increase": 1.0,
+        "gasoleoa_pred": 1.5932874781407467,
+        "gasoleoa_ci_lower_80": 1.5612874781407466,
+        "gasoleoa_ci_upper_80": 1.6252874781407467,
+        "gasoleoa_ci_lower_95": 1.5442874781407467,
+        "gasoleoa_ci_upper_95": 1.6422874781407466,
+        "gasoleoa_prob_increase": 0.0
+      },
+      {
+        "date": "2026-08-16 00:00:00",
+        "gasolina_95_pred": 1.4587917389515246,
+        "gasolina_95_ci_lower_80": 1.4267917389515246,
+        "gasolina_95_ci_upper_80": 1.4907917389515246,
+        "gasolina_95_ci_lower_95": 1.4097917389515247,
+        "gasolina_95_ci_upper_95": 1.5077917389515245,
+        "gasolina_prob_increase": 0.0,
+        "gasoleoa_pred": 1.6367832710035577,
+        "gasoleoa_ci_lower_80": 1.6047832710035577,
+        "gasoleoa_ci_upper_80": 1.6687832710035577,
+        "gasoleoa_ci_lower_95": 1.5877832710035578,
+        "gasoleoa_ci_upper_95": 1.6857832710035576,
+        "gasoleoa_prob_increase": 1.0
+      },
+      {
+        "date": "2026-08-17 00:00:00",
+        "gasolina_95_pred": 1.4740456619791913,
+        "gasolina_95_ci_lower_80": 1.4420456619791913,
+        "gasolina_95_ci_upper_80": 1.5060456619791913,
+        "gasolina_95_ci_lower_95": 1.4250456619791914,
+        "gasolina_95_ci_upper_95": 1.5230456619791912,
+        "gasolina_prob_increase": 0.0,
+        "gasoleoa_pred": 1.5943110064073345,
+        "gasoleoa_ci_lower_80": 1.5623110064073344,
+        "gasoleoa_ci_upper_80": 1.6263110064073345,
+        "gasoleoa_ci_lower_95": 1.5453110064073345,
+        "gasoleoa_ci_upper_95": 1.6433110064073344,
+        "gasoleoa_prob_increase": 0.0
+      },
+      {
+        "date": "2026-08-18 00:00:00",
+        "gasolina_95_pred": 1.4626980738938347,
+        "gasolina_95_ci_lower_80": 1.4306980738938346,
+        "gasolina_95_ci_upper_80": 1.4946980738938347,
+        "gasolina_95_ci_lower_95": 1.4136980738938347,
+        "gasolina_95_ci_upper_95": 1.5116980738938346,
+        "gasolina_prob_increase": 0.0,
+        "gasoleoa_pred": 1.611038911250673,
+        "gasoleoa_ci_lower_80": 1.5790389112506729,
+        "gasoleoa_ci_upper_80": 1.643038911250673,
+        "gasoleoa_ci_lower_95": 1.562038911250673,
+        "gasoleoa_ci_upper_95": 1.6600389112506728,
+        "gasoleoa_prob_increase": 0.0
+      },
+      {
+        "date": "2026-08-19 00:00:00",
+        "gasolina_95_pred": 1.4687304187278785,
+        "gasolina_95_ci_lower_80": 1.4367304187278784,
+        "gasolina_95_ci_upper_80": 1.5007304187278785,
+        "gasolina_95_ci_lower_95": 1.4197304187278785,
+        "gasolina_95_ci_upper_95": 1.5177304187278784,
+        "gasolina_prob_increase": 0.0,
+        "gasoleoa_pred": 1.6114717769983016,
+        "gasoleoa_ci_lower_80": 1.5794717769983015,
+        "gasoleoa_ci_upper_80": 1.6434717769983016,
+        "gasoleoa_ci_lower_95": 1.5624717769983016,
+        "gasoleoa_ci_upper_95": 1.6604717769983015,
+        "gasoleoa_prob_increase": 0.0
+      },
+      {
+        "date": "2026-08-20 00:00:00",
+        "gasolina_95_pred": 1.4916510314015097,
+        "gasolina_95_ci_lower_80": 1.4596510314015096,
+        "gasolina_95_ci_upper_80": 1.5236510314015097,
+        "gasolina_95_ci_lower_95": 1.4426510314015097,
+        "gasolina_95_ci_upper_95": 1.5406510314015096,
+        "gasolina_prob_increase": 1.0,
+        "gasoleoa_pred": 1.5981971658572358,
+        "gasoleoa_ci_lower_80": 1.5661971658572358,
+        "gasoleoa_ci_upper_80": 1.6301971658572358,
+        "gasoleoa_ci_lower_95": 1.5491971658572359,
+        "gasoleoa_ci_upper_95": 1.6471971658572357,
+        "gasoleoa_prob_increase": 0.0
+      },
+      {
+        "date": "2026-08-21 00:00:00",
+        "gasolina_95_pred": 1.467746272622808,
+        "gasolina_95_ci_lower_80": 1.435746272622808,
+        "gasolina_95_ci_upper_80": 1.4997462726228081,
+        "gasolina_95_ci_lower_95": 1.4187462726228082,
+        "gasolina_95_ci_upper_95": 1.516746272622808,
+        "gasolina_prob_increase": 0.0,
+        "gasoleoa_pred": 1.5769449701332312,
+        "gasoleoa_ci_lower_80": 1.5449449701332312,
+        "gasoleoa_ci_upper_80": 1.6089449701332312,
+        "gasoleoa_ci_lower_95": 1.5279449701332313,
+        "gasoleoa_ci_upper_95": 1.6259449701332311,
+        "gasoleoa_prob_increase": 0.0
+      },
+      {
+        "date": "2026-08-22 00:00:00",
+        "gasolina_95_pred": 1.4791593677730377,
+        "gasolina_95_ci_lower_80": 1.4471593677730377,
+        "gasolina_95_ci_upper_80": 1.5111593677730377,
+        "gasolina_95_ci_lower_95": 1.4301593677730378,
+        "gasolina_95_ci_upper_95": 1.5281593677730376,
+        "gasolina_prob_increase": 0.0,
+        "gasoleoa_pred": 1.6285671874799965,
+        "gasoleoa_ci_lower_80": 1.5965671874799965,
+        "gasoleoa_ci_upper_80": 1.6605671874799965,
+        "gasoleoa_ci_lower_95": 1.5795671874799966,
+        "gasoleoa_ci_upper_95": 1.6775671874799964,
+        "gasoleoa_prob_increase": 1.0
+      },
+      {
+        "date": "2026-08-23 00:00:00",
+        "gasolina_95_pred": 1.458651751483996,
+        "gasolina_95_ci_lower_80": 1.426651751483996,
+        "gasolina_95_ci_upper_80": 1.490651751483996,
+        "gasolina_95_ci_lower_95": 1.4096517514839961,
+        "gasolina_95_ci_upper_95": 1.507651751483996,
+        "gasolina_prob_increase": 0.0,
+        "gasoleoa_pred": 1.61698515200852,
+        "gasoleoa_ci_lower_80": 1.58498515200852,
+        "gasoleoa_ci_upper_80": 1.6489851520085201,
+        "gasoleoa_ci_lower_95": 1.5679851520085202,
+        "gasoleoa_ci_upper_95": 1.66598515200852,
+        "gasoleoa_prob_increase": 1.0
+      },
+      {
+        "date": "2026-08-24 00:00:00",
+        "gasolina_95_pred": 1.4699256604155257,
+        "gasolina_95_ci_lower_80": 1.4379256604155257,
+        "gasolina_95_ci_upper_80": 1.5019256604155258,
+        "gasolina_95_ci_lower_95": 1.4209256604155258,
+        "gasolina_95_ci_upper_95": 1.5189256604155257,
+        "gasolina_prob_increase": 0.0,
+        "gasoleoa_pred": 1.587722629925205,
+        "gasoleoa_ci_lower_80": 1.555722629925205,
+        "gasoleoa_ci_upper_80": 1.619722629925205,
+        "gasoleoa_ci_lower_95": 1.538722629925205,
+        "gasoleoa_ci_upper_95": 1.636722629925205,
+        "gasoleoa_prob_increase": 0.0
+      },
+      {
+        "date": "2026-08-25 00:00:00",
+        "gasolina_95_pred": 1.4716664799935006,
+        "gasolina_95_ci_lower_80": 1.4396664799935006,
+        "gasolina_95_ci_upper_80": 1.5036664799935007,
+        "gasolina_95_ci_lower_95": 1.4226664799935007,
+        "gasolina_95_ci_upper_95": 1.5206664799935006,
+        "gasolina_prob_increase": 0.0,
+        "gasoleoa_pred": 1.5808422263838664,
+        "gasoleoa_ci_lower_80": 1.5488422263838664,
+        "gasoleoa_ci_upper_80": 1.6128422263838664,
+        "gasoleoa_ci_lower_95": 1.5318422263838665,
+        "gasoleoa_ci_upper_95": 1.6298422263838663,
+        "gasoleoa_prob_increase": 0.0
+      },
+      {
+        "date": "2026-08-26 00:00:00",
+        "gasolina_95_pred": 1.5043016149188961,
+        "gasolina_95_ci_lower_80": 1.472301614918896,
+        "gasolina_95_ci_upper_80": 1.5363016149188962,
+        "gasolina_95_ci_lower_95": 1.4553016149188962,
+        "gasolina_95_ci_upper_95": 1.553301614918896,
+        "gasolina_prob_increase": 1.0,
+        "gasoleoa_pred": 1.5893085494028778,
+        "gasoleoa_ci_lower_80": 1.5573085494028778,
+        "gasoleoa_ci_upper_80": 1.6213085494028778,
+        "gasoleoa_ci_lower_95": 1.5403085494028779,
+        "gasoleoa_ci_upper_95": 1.6383085494028777,
+        "gasoleoa_prob_increase": 0.0
+      },
+      {
+        "date": "2026-08-27 00:00:00",
+        "gasolina_95_pred": 1.476932655068968,
+        "gasolina_95_ci_lower_80": 1.444932655068968,
+        "gasolina_95_ci_upper_80": 1.5089326550689681,
+        "gasolina_95_ci_lower_95": 1.4279326550689682,
+        "gasolina_95_ci_upper_95": 1.525932655068968,
+        "gasolina_prob_increase": 0.0,
+        "gasoleoa_pred": 1.575372190127018,
+        "gasoleoa_ci_lower_80": 1.5433721901270179,
+        "gasoleoa_ci_upper_80": 1.607372190127018,
+        "gasoleoa_ci_lower_95": 1.526372190127018,
+        "gasoleoa_ci_upper_95": 1.6243721901270178,
+        "gasoleoa_prob_increase": 0.0
+      },
+      {
+        "date": "2026-08-28 00:00:00",
+        "gasolina_95_pred": 1.5020369769626898,
+        "gasolina_95_ci_lower_80": 1.4700369769626898,
+        "gasolina_95_ci_upper_80": 1.5340369769626898,
+        "gasolina_95_ci_lower_95": 1.4530369769626899,
+        "gasolina_95_ci_upper_95": 1.5510369769626897,
+        "gasolina_prob_increase": 1.0,
+        "gasoleoa_pred": 1.580315275600848,
+        "gasoleoa_ci_lower_80": 1.548315275600848,
+        "gasoleoa_ci_upper_80": 1.612315275600848,
+        "gasoleoa_ci_lower_95": 1.5313152756008481,
+        "gasoleoa_ci_upper_95": 1.629315275600848,
+        "gasoleoa_prob_increase": 0.0
+      },
+      {
+        "date": "2026-08-29 00:00:00",
+        "gasolina_95_pred": 1.4796095496599542,
+        "gasolina_95_ci_lower_80": 1.4476095496599541,
+        "gasolina_95_ci_upper_80": 1.5116095496599542,
+        "gasolina_95_ci_lower_95": 1.4306095496599542,
+        "gasolina_95_ci_upper_95": 1.528609549659954,
+        "gasolina_prob_increase": 0.0,
+        "gasoleoa_pred": 1.6006850251914861,
+        "gasoleoa_ci_lower_80": 1.5686850251914861,
+        "gasoleoa_ci_upper_80": 1.6326850251914862,
+        "gasoleoa_ci_lower_95": 1.5516850251914862,
+        "gasoleoa_ci_upper_95": 1.649685025191486,
+        "gasoleoa_prob_increase": 0.0
+      },
+      {
+        "date": "2026-08-30 00:00:00",
+        "gasolina_95_pred": 1.4806209757564337,
+        "gasolina_95_ci_lower_80": 1.4486209757564337,
+        "gasolina_95_ci_upper_80": 1.5126209757564337,
+        "gasolina_95_ci_lower_95": 1.4316209757564338,
+        "gasolina_95_ci_upper_95": 1.5296209757564336,
+        "gasolina_prob_increase": 0.0,
+        "gasoleoa_pred": 1.6110167410648009,
+        "gasoleoa_ci_lower_80": 1.5790167410648008,
+        "gasoleoa_ci_upper_80": 1.643016741064801,
+        "gasoleoa_ci_lower_95": 1.562016741064801,
+        "gasoleoa_ci_upper_95": 1.6600167410648008,
+        "gasoleoa_prob_increase": 0.0
+      },
+      {
+        "date": "2026-08-31 00:00:00",
+        "gasolina_95_pred": 1.5126073082988847,
+        "gasolina_95_ci_lower_80": 1.4806073082988847,
+        "gasolina_95_ci_upper_80": 1.5446073082988847,
+        "gasolina_95_ci_lower_95": 1.4636073082988847,
+        "gasolina_95_ci_upper_95": 1.5616073082988846,
+        "gasolina_prob_increase": 1.0,
+        "gasoleoa_pred": 1.6191902980280788,
+        "gasoleoa_ci_lower_80": 1.5871902980280788,
+        "gasoleoa_ci_upper_80": 1.6511902980280788,
+        "gasoleoa_ci_lower_95": 1.5701902980280789,
+        "gasoleoa_ci_upper_95": 1.6681902980280787,
+        "gasoleoa_prob_increase": 1.0
+      },
+      {
+        "date": "2026-09-01 00:00:00",
+        "gasolina_95_pred": 1.4638513689947543,
+        "gasolina_95_ci_lower_80": 1.4318513689947543,
+        "gasolina_95_ci_upper_80": 1.4958513689947543,
+        "gasolina_95_ci_lower_95": 1.4148513689947544,
+        "gasolina_95_ci_upper_95": 1.5128513689947543,
+        "gasolina_prob_increase": 0.0,
+        "gasoleoa_pred": 1.6086889116752328,
+        "gasoleoa_ci_lower_80": 1.5766889116752327,
+        "gasoleoa_ci_upper_80": 1.6406889116752328,
+        "gasoleoa_ci_lower_95": 1.5596889116752328,
+        "gasoleoa_ci_upper_95": 1.6576889116752327,
+        "gasoleoa_prob_increase": 0.0
+      },
+      {
+        "date": "2026-09-02 00:00:00",
+        "gasolina_95_pred": 1.4773728017711707,
+        "gasolina_95_ci_lower_80": 1.4453728017711707,
+        "gasolina_95_ci_upper_80": 1.5093728017711707,
+        "gasolina_95_ci_lower_95": 1.4283728017711708,
+        "gasolina_95_ci_upper_95": 1.5263728017711706,
+        "gasolina_prob_increase": 0.0,
+        "gasoleoa_pred": 1.6366792729492956,
+        "gasoleoa_ci_lower_80": 1.6046792729492956,
+        "gasoleoa_ci_upper_80": 1.6686792729492956,
+        "gasoleoa_ci_lower_95": 1.5876792729492957,
+        "gasoleoa_ci_upper_95": 1.6856792729492955,
+        "gasoleoa_prob_increase": 1.0
+      },
+      {
+        "date": "2026-09-03 00:00:00",
+        "gasolina_95_pred": 1.487708992100433,
+        "gasolina_95_ci_lower_80": 1.455708992100433,
+        "gasolina_95_ci_upper_80": 1.519708992100433,
+        "gasolina_95_ci_lower_95": 1.438708992100433,
+        "gasolina_95_ci_upper_95": 1.5367089921004329,
+        "gasolina_prob_increase": 1.0,
+        "gasoleoa_pred": 1.6101599274105522,
+        "gasoleoa_ci_lower_80": 1.5781599274105522,
+        "gasoleoa_ci_upper_80": 1.6421599274105523,
+        "gasoleoa_ci_lower_95": 1.5611599274105523,
+        "gasoleoa_ci_upper_95": 1.6591599274105522,
+        "gasoleoa_prob_increase": 0.0
+      }
+    ],
+    "probability_summary": {
+      "gasolina_prob_increase_7d": 0.429,
+      "gasoleoa_prob_increase_7d": 0.286,
+      "gasolina_prob_increase_30d": 0.367,
+      "gasoleoa_prob_increase_30d": 0.3
+    }
+  },
+  "news_impact_analysis": {
+    "total_events": 8,
+    "events_by_category": {
+      "OPEC": [
+        {
+          "date": "2026-06-05T00:00:00",
+          "event": "OPEC production decision - slight output reduction",
+          "impact_direction": "up",
+          "impact_magnitude": 0.02,
+          "description": "OPEC announces 5% production cut to support prices"
+        }
+      ],
+      "Inventory": [
+        {
+          "date": "2026-06-15T00:00:00",
+          "event": "US inventory report shows surplus",
+          "impact_direction": "down",
+          "impact_magnitude": -0.015,
+          "description": "Higher than expected US crude inventories"
+        }
+      ],
+      "Fiscal": [
+        {
+          "date": "2026-06-22T00:00:00",
+          "event": "Spanish government discusses fuel tax increase",
+          "impact_direction": "up",
+          "impact_magnitude": 0.025,
+          "description": "Proposed increase in fuel tax to 0.385 EUR/L"
+        }
+      ],
+      "Crude_Price": [
+        {
+          "date": "2026-07-03T00:00:00",
+          "event": "Brent crude breaks $85/barrel",
+          "impact_direction": "up",
+          "impact_magnitude": 0.03,
+          "description": "Geopolitical tensions push Brent above 85 USD/barrel"
+        }
+      ],
+      "Seasonal": [
+        {
+          "date": "2026-07-10T00:00:00",
+          "event": "European summer driving season begins",
+          "impact_direction": "up",
+          "impact_magnitude": 0.02,
+          "description": "Peak summer travel season increases fuel demand"
+        }
+      ],
+      "FX": [
+        {
+          "date": "2026-07-18T00:00:00",
+          "event": "USD strengthens against EUR",
+          "impact_direction": "up",
+          "impact_magnitude": 0.01,
+          "description": "USD/EUR exchange rate moves to 1.09, increasing imported fuel costs"
+        }
+      ],
+      "Macro": [
+        {
+          "date": "2026-07-25T00:00:00",
+          "event": "Spain reports higher inflation expectations",
+          "impact_direction": "up",
+          "impact_magnitude": 0.015,
+          "description": "CPI expectations increase to 2.8% for fuel sector"
+        }
+      ],
+      "Supply": [
+        {
+          "date": "2026-08-01T00:00:00",
+          "event": "IEA warns of supply tightness",
+          "impact_direction": "up",
+          "impact_magnitude": 0.025,
+          "description": "International Energy Agency cautions on global supply constraints"
+        }
+      ]
+    }
+  },
+  "model_performance": {
+    "gasolina_95": {
+      "xgboost": {
+        "rmse": 0.0034917665407593183,
+        "mae": 0.0025746101173987714,
+        "r2": 0.9591730072606445
+      },
+      "lightgbm": {
+        "rmse": 0.011327173115790805,
+        "mae": 0.008505443847789304,
+        "r2": 0.5703645888623228
+      }
+    },
+    "gasoleoa": {
+      "xgboost": {
+        "rmse": 0.005940919052996514,
+        "mae": 0.004413626588674696,
+        "r2": 0.8552242278081112
+      },
+      "lightgbm": {
+        "rmse": 0.008540247684175542,
+        "mae": 0.0060784696710267,
+        "r2": 0.7008220703050311
+      }
+    }
+  },
+  "recommendations": [
+    "Gasolina 95: Prices expected to remain relatively stable.",
+    "Gas\u00f3leo A: Diesel prices expected to be stable."
+  ]
+}

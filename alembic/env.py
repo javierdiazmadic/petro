@@ -16,7 +16,9 @@ if config.config_file_name is not None:
 # Get SQLAlchemy URL from environment
 from petro.core.config import settings
 
-config.set_main_option("sqlalchemy.url", settings.database.url)
+# Convert async URL to sync for Alembic (replace postgresql+asyncpg with postgresql)
+db_url = settings.database.url.replace("postgresql+asyncpg://", "postgresql://")
+config.set_main_option("sqlalchemy.url", db_url)
 
 # Set target metadata (if using declarative base)
 # from petro.infrastructure.db.models import Base
@@ -42,11 +44,15 @@ def run_migrations_offline() -> None:
 def run_migrations_online() -> None:
     """Run migrations in 'online' mode."""
 
-    connectable = engine_from_config(
-        config.get_section(config.config_ini_section, {}),
-        prefix="sqlalchemy.",
-        poolclass=pool.NullPool,
-    )
+    # Get the database URL and convert from async to sync
+    from sqlalchemy import create_engine
+
+    db_url = config.get_main_option("sqlalchemy.url")
+    if "asyncpg" in db_url:
+        db_url = db_url.replace("postgresql+asyncpg://", "postgresql://")
+
+    # Create engine directly without config options to avoid track_migrations issue
+    connectable = create_engine(db_url, poolclass=pool.NullPool)
 
     with connectable.connect() as connection:
         context.configure(connection=connection, target_metadata=target_metadata)

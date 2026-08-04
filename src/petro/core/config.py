@@ -78,11 +78,11 @@ class PredictionSettings(BaseSettings):
 
 
 class ConnectorsSettings(BaseSettings):
-    brent__enabled: bool = True
-    wti__enabled: bool = True
-    eurusd__enabled: bool = True
-    geoportal__enabled: bool = True
-    rss_news__enabled: bool = True
+    brent_enabled: bool = True
+    wti_enabled: bool = True
+    eurusd_enabled: bool = True
+    geoportal_enabled: bool = True
+    rss_news_enabled: bool = True
 
 
 class Settings(BaseSettings):

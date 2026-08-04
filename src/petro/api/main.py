@@ -2,8 +2,9 @@
 
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, WebSocket
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 from prometheus_fastapi_instrumentator import Instrumentator
 
 from petro.core import get_logger, setup_logging
@@ -11,6 +12,9 @@ from petro.core.config import settings
 from petro.core.exceptions import PetroException
 from petro.core.security import setup_cors
 from petro.api.routes import router as api_router
+from petro.api.dashboard import router as dashboard_router
+from petro.api.toledo_analysis import router as toledo_router
+from petro.api.predictions import router as predictions_router
 
 logger = get_logger(__name__)
 
@@ -46,6 +50,9 @@ def create_app() -> FastAPI:
 
     # Include API routes
     app.include_router(api_router)
+    app.include_router(dashboard_router)
+    app.include_router(toledo_router)
+    app.include_router(predictions_router)
 
     # Exception handlers
     @app.exception_handler(PetroException)

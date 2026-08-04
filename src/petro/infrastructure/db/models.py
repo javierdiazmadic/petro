@@ -36,7 +36,7 @@ class Price(Base):
     price_gasoleoa = Column(Float, nullable=False)
     source = Column(String(100), nullable=False, default="geoportal")
     region = Column(String(100), nullable=True)  # Optional regional data
-    metadata = Column(JSON, nullable=True)
+    meta_data = Column(JSON, nullable=True)
 
     def __repr__(self):
         return f"<Price(timestamp={self.timestamp}, gasolina={self.price_gasolina_95}, gasoleoa={self.price_gasoleoa})>"
@@ -140,7 +140,7 @@ class ProductionOPEC(Base):
     total_production = Column(Float, nullable=True)
     unit = Column(String(50), nullable=False, default="barrel")
     source = Column(String(100), nullable=False, default="opec")
-    metadata = Column(JSON, nullable=True)
+    meta_data = Column(JSON, nullable=True)
 
     def __repr__(self):
         return f"<ProductionOPEC(timestamp={self.timestamp})>"
@@ -171,7 +171,7 @@ class News(Base):
     entities = Column(JSON, nullable=True)  # {"countries": [...], "companies": [...], "refineries": [...]}
     sentiment_score = Column(Float, nullable=True)  # -1 to 1
     is_duplicate = Column(Integer, default=0)  # 1 if duplicate, 0 otherwise
-    metadata = Column(JSON, nullable=True)
+    meta_data = Column(JSON, nullable=True)
 
     def __repr__(self):
         return f"<News(id={self.id}, title={self.title[:50]}...)>"

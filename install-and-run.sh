@@ -71,18 +71,18 @@ check_docker() {
 }
 
 check_docker_compose() {
-    if ! command -v docker-compose &> /dev/null; then
-        print_error "Docker Compose no está instalado"
-        echo "Instala Docker Compose desde: https://docs.docker.com/compose/install"
+    if ! command -v docker &> /dev/null || ! docker compose version &> /dev/null; then
+        print_error "Docker Compose no está disponible"
+        echo "Asegúrate de tener Docker con soporte para 'docker compose'"
         exit 1
     fi
-    print_success "Docker Compose está instalado"
+    print_success "Docker Compose está disponible"
 }
 
 setup_project() {
     # Check if in project directory
-    if [ ! -f "docker-compose.yml" ]; then
-        print_error "No se encuentra docker-compose.yml"
+    if [ ! -f "docker compose.yml" ]; then
+        print_error "No se encuentra docker compose.yml"
         print_info "Asegúrate de estar en el directorio raíz de petro"
         exit 1
     fi
@@ -103,7 +103,7 @@ setup_project() {
 
 start_services() {
     print_step "Iniciando containers..."
-    docker-compose up -d
+    docker compose up -d
     print_success "Containers iniciados"
 }
 
@@ -155,11 +155,11 @@ print_summary() {
     echo -e "${GREEN}Comandos Útiles${NC}"
     echo -e "${GREEN}═══════════════════════════════════════${NC}"
     echo ""
-    echo -e "  Ver logs:         ${YELLOW}docker-compose logs -f${NC}"
-    echo -e "  Ver logs API:     ${YELLOW}docker-compose logs -f api${NC}"
-    echo -e "  Ver logs Celery:  ${YELLOW}docker-compose logs -f celery-beat${NC}"
-    echo -e "  Detener:          ${YELLOW}docker-compose down${NC}"
-    echo -e "  Reiniciar:        ${YELLOW}docker-compose restart${NC}"
+    echo -e "  Ver logs:         ${YELLOW}docker compose logs -f${NC}"
+    echo -e "  Ver logs API:     ${YELLOW}docker compose logs -f api${NC}"
+    echo -e "  Ver logs Celery:  ${YELLOW}docker compose logs -f celery-beat${NC}"
+    echo -e "  Detener:          ${YELLOW}docker compose down${NC}"
+    echo -e "  Reiniciar:        ${YELLOW}docker compose restart${NC}"
     echo ""
     echo -e "${GREEN}═══════════════════════════════════════${NC}"
     echo -e "${BLUE}Automación${NC}"

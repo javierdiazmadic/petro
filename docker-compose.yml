@@ -3,7 +3,7 @@ version: '3.9'
 services:
   # PostgreSQL con TimescaleDB
   db:
-    image: timescaledb/timescaledb:latest-pg16
+    image: timescale/timescaledb:latest-pg16
     container_name: petro-db
     environment:
       POSTGRES_USER: petro
@@ -14,7 +14,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./infra/docker/init-db.sql:/docker-entrypoint-initdb.d/01-init.sql
     ports:
-      - "5432:5432"
+      - "5433:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U petro"]
       interval: 10s
@@ -50,7 +50,7 @@ services:
     volumes:
       - mlflow_artifacts:/mlflow/artifacts
     ports:
-      - "5000:5000"
+      - "7500:5000"
     depends_on:
       db:
         condition: service_healthy
@@ -105,8 +105,8 @@ services:
     environment:
       - "LS_JAVA_OPTS=-Xmx4g -Xms4g"
     ports:
-      - "5000:5000"
-      - "9600:9600"
+      - "7700:5000"
+      - "7701:9600"
     depends_on:
       elasticsearch:
         condition: service_healthy
@@ -164,8 +164,32 @@ services:
       REDIS__URL: redis://redis:6379/0
       CELERY__BROKER_URL: redis://redis:6379/1
       CELERY__RESULT_BACKEND: redis://redis:6379/2
-      LOG_LEVEL: DEBUG
-      MLFLOW__TRACKING_URI: http://mlflow:5000
+      LOGGING__LEVEL: DEBUG
+      LOGGING__FORMAT: json
+      MLFLOW__TRACKING_URI: http://mlflow:7500
+      MLFLOW__ARTIFACT_ROOT: /mlflow/artifacts
+      API__HOST: 0.0.0.0
+      API__PORT: 8000
+      API__CORS_ORIGINS: '["http://localhost", "http://localhost:3000", "http://localhost:8000", "http://192.168.30.199:3010", "http://192.168.30.199:8000", "*"]'
+      ML__MODEL_PATH: models/production/price_model.pkl
+      ML__SCALER_PATH: models/production/scaler.pkl
+      ML__PREDICTION_HORIZON_DAYS: 7
+      NLP__MODEL_SIZE: full
+      NLP__ENABLE_TRANSFORMERS: "True"
+      NLP__BERT_MODEL: bert-base-multilingual-cased
+      NLP__EMBEDDING_MODEL: sentence-transformers/all-MiniLM-l12-v2
+      GPU__ENABLE: "True"
+      GPU__DEVICE: cuda:0
+      GPU__MEMORY_FRACTION: "0.8"
+      FEATURES__RECALC_INTERVAL_MINUTES: 15
+      FEATURES__CACHE_TTL_SECONDS: 600
+      PREDICTION__ENABLE_EXPLAINABILITY: "True"
+      PREDICTION__BATCH_SIZE: 32
+      CONNECTORS__BRENT_ENABLED: "True"
+      CONNECTORS__WTI_ENABLED: "True"
+      CONNECTORS__EURUSD_ENABLED: "True"
+      CONNECTORS__GEOPORTAL_ENABLED: "True"
+      CONNECTORS__RSS_NEWS_ENABLED: "True"
     volumes:
       - ./src:/app/src
       - ./models:/app/models
@@ -176,13 +200,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-      mlflow:
-        condition: service_started
-    command: >
-      bash -c "
-      alembic upgrade head &&
-      uvicorn petro.api.main:app --host 0.0.0.0 --port 8000 --reload
-      "
+    command: uvicorn petro.api.main:app --host 0.0.0.0 --port 8000 --reload
     networks:
       - petro-network
 
@@ -201,8 +219,31 @@ services:
       REDIS__URL: redis://redis:6379/0
       CELERY__BROKER_URL: redis://redis:6379/1
       CELERY__RESULT_BACKEND: redis://redis:6379/2
-      LOG_LEVEL: DEBUG
-      MLFLOW__TRACKING_URI: http://mlflow:5000
+      LOGGING__LEVEL: DEBUG
+      LOGGING__FORMAT: json
+      MLFLOW__TRACKING_URI: http://mlflow:7500
+      MLFLOW__ARTIFACT_ROOT: /mlflow/artifacts
+      API__HOST: 0.0.0.0
+      API__PORT: 8000
+      ML__MODEL_PATH: models/production/price_model.pkl
+      ML__SCALER_PATH: models/production/scaler.pkl
+      ML__PREDICTION_HORIZON_DAYS: 7
+      NLP__MODEL_SIZE: full
+      NLP__ENABLE_TRANSFORMERS: "True"
+      NLP__BERT_MODEL: bert-base-multilingual-cased
+      NLP__EMBEDDING_MODEL: sentence-transformers/all-MiniLM-l12-v2
+      GPU__ENABLE: "True"
+      GPU__DEVICE: cuda:0
+      GPU__MEMORY_FRACTION: "0.8"
+      FEATURES__RECALC_INTERVAL_MINUTES: 15
+      FEATURES__CACHE_TTL_SECONDS: 600
+      PREDICTION__ENABLE_EXPLAINABILITY: "True"
+      PREDICTION__BATCH_SIZE: 32
+      CONNECTORS__BRENT_ENABLED: "True"
+      CONNECTORS__WTI_ENABLED: "True"
+      CONNECTORS__EURUSD_ENABLED: "True"
+      CONNECTORS__GEOPORTAL_ENABLED: "True"
+      CONNECTORS__RSS_NEWS_ENABLED: "True"
     volumes:
       - ./src:/app/src
       - ./models:/app/models
@@ -214,13 +255,6 @@ services:
     command: celery -A petro.scheduler.app worker --loglevel=info --concurrency=2
     networks:
       - petro-network
-    # Deploy 2 workers for parallelization
-    deploy:
-      replicas: 2
-      resources:
-        limits:
-          cpus: '2'
-          memory: 8G
 
   # Celery beat (scheduler)
   beat:
@@ -237,8 +271,31 @@ services:
       REDIS__URL: redis://redis:6379/0
       CELERY__BROKER_URL: redis://redis:6379/1
       CELERY__RESULT_BACKEND: redis://redis:6379/2
-      LOG_LEVEL: DEBUG
-      MLFLOW__TRACKING_URI: http://mlflow:5000
+      LOGGING__LEVEL: DEBUG
+      LOGGING__FORMAT: json
+      MLFLOW__TRACKING_URI: http://mlflow:7500
+      MLFLOW__ARTIFACT_ROOT: /mlflow/artifacts
+      API__HOST: 0.0.0.0
+      API__PORT: 8000
+      ML__MODEL_PATH: models/production/price_model.pkl
+      ML__SCALER_PATH: models/production/scaler.pkl
+      ML__PREDICTION_HORIZON_DAYS: 7
+      NLP__MODEL_SIZE: full
+      NLP__ENABLE_TRANSFORMERS: "True"
+      NLP__BERT_MODEL: bert-base-multilingual-cased
+      NLP__EMBEDDING_MODEL: sentence-transformers/all-MiniLM-l12-v2
+      GPU__ENABLE: "True"
+      GPU__DEVICE: cuda:0
+      GPU__MEMORY_FRACTION: "0.8"
+      FEATURES__RECALC_INTERVAL_MINUTES: 15
+      FEATURES__CACHE_TTL_SECONDS: 600
+      PREDICTION__ENABLE_EXPLAINABILITY: "True"
+      PREDICTION__BATCH_SIZE: 32
+      CONNECTORS__BRENT_ENABLED: "True"
+      CONNECTORS__WTI_ENABLED: "True"
+      CONNECTORS__EURUSD_ENABLED: "True"
+      CONNECTORS__GEOPORTAL_ENABLED: "True"
+      CONNECTORS__RSS_NEWS_ENABLED: "True"
     volumes:
       - ./src:/app/src
       - ./models:/app/models
@@ -248,6 +305,21 @@ services:
       redis:
         condition: service_healthy
     command: celery -A petro.scheduler.app beat --loglevel=info
+    networks:
+      - petro-network
+
+  # Next.js Frontend Dashboard
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: petro-frontend
+    ports:
+      - "3010:3010"
+    environment:
+      NEXT_PUBLIC_API_URL: http://192.168.30.199:8000
+    depends_on:
+      - api
     networks:
       - petro-network
 

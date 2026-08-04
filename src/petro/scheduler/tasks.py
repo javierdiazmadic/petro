@@ -7,10 +7,10 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 
-from petro.core import get_logger, get_settings
+from petro.core import get_logger, settings
 from petro.scheduler.app import app
 from petro.infrastructure.db.models import Forecast, Price
-from petro.infrastructure.db.session import async_engine, async_session_local
+from petro.infrastructure.db.session import engine, AsyncSessionLocal
 
 logger = get_logger(__name__)
 
@@ -53,7 +53,7 @@ async def _fetch_data_async():
     try:
         from petro.ingestion.orchestrator import DataIngestionOrchestrator
 
-        orchestrator = DataIngestionOrchestrator(async_session_local)
+        orchestrator = DataIngestionOrchestrator(AsyncSessionLocal)
         result = await orchestrator.run_all_connectors()
 
         return {
@@ -102,7 +102,7 @@ async def _process_news_async():
         from petro.infrastructure.db.repositories import BaseRepository
         from petro.infrastructure.db.models import News
 
-        session = async_session_local()
+        session = AsyncSessionLocal()
 
         try:
             # Fetch unprocessed news
@@ -198,7 +198,7 @@ async def _calculate_features_async():
     try:
         from petro.features.calculator import FeatureEngineeringCalculator
 
-        session = async_session_local()
+        session = AsyncSessionLocal()
 
         try:
             calculator = FeatureEngineeringCalculator(session)
@@ -262,7 +262,7 @@ async def _run_inference_async():
         from petro.infrastructure.db.models import Price
         import numpy as np
 
-        session = async_session_local()
+        session = AsyncSessionLocal()
 
         try:
             # Get current price
@@ -345,7 +345,7 @@ async def _save_forecast_async():
         from petro.infrastructure.db.repositories import BaseRepository
         from petro.infrastructure.db.models import Forecast
 
-        session = async_session_local()
+        session = AsyncSessionLocal()
 
         try:
             # Get latest inference results from task context
@@ -419,7 +419,7 @@ async def _train_models_async():
         from petro.infrastructure.db.models import Price, VariableStatistical
         import numpy as np
 
-        session = async_session_local()
+        session = AsyncSessionLocal()
 
         try:
             # Fetch training data from database

@@ -36,7 +36,7 @@ class ModelLoader:
             # Get best run
             experiment = mlflow.get_experiment_by_name(experiment_name)
             if not experiment:
-                logger.error(f"Experiment '{experiment_name}' not found")
+                logger.debug(f"Experiment '{experiment_name}' not found (optional at startup)")
                 return None, None
 
             client = mlflow.tracking.MlflowClient()
