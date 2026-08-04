@@ -114,7 +114,7 @@ features/         - Ingeniería de características
 
 ### Inicio Rápido (5 minutos)
 ```bash
-git clone https://github.com/yourusername/petro.git
+git clone https://github.com/javierdiazmadic/petro.git
 cd petro
 cp .env.example .env
 docker compose up -d --build

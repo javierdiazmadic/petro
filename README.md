@@ -91,7 +91,7 @@ Puertos libres: 8000, 3010, 5433, 6379, 3000, 7500, 5601, 9200
 
 ### Paso 1: Clonar repositorio
 ```bash
-git clone https://github.com/yourusername/petro.git
+git clone https://github.com/javierdiazmadic/petro.git
 cd petro
 ```
 
@@ -554,8 +554,8 @@ MIT License - Ver [LICENSE](LICENSE) para detalles completos
 
 **Autor:** Javier Diaz  
 **Email:** javier.diaz@madic.com  
-**Repositorio:** https://github.com/yourusername/petro  
-**Issues:** https://github.com/yourusername/petro/issues
+**Repositorio:** https://github.com/javierdiazmadic/petro  
+**Issues:** https://github.com/javierdiazmadic/petro/issues
 
 ---
 
