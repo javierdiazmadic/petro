@@ -12,8 +12,8 @@ export function PriceChart({ data, stats }: PriceChartProps) {
     return <p className="text-gray-500 text-center py-12">Sin datos disponibles</p>;
   }
 
-  // Calculate interval intelligently based on data length
-  const interval = Math.max(0, Math.floor(data.length / 20));
+  // Calculate interval intelligently based on data length (show ~15-20 labels)
+  const interval = Math.max(0, Math.floor(data.length / 18));
 
   return (
     <div className="space-y-6">
@@ -42,9 +42,9 @@ export function PriceChart({ data, stats }: PriceChartProps) {
       {/* Gráfico principal */}
       <div className="bg-white p-6 rounded-lg">
         <p className="text-sm text-gray-600 mb-4">
-          📊 Histórico de {data.length} días - Precios reales actualizados DIARIAMENTE (1 dato por día)
+          📊 Histórico de {data.length} registros desde {data[0]?.date || 'N/A'} - Datos reales del Ministerio de Energía (Toledo)
         </p>
-        <ResponsiveContainer width="100%" height={400}>
+        <ResponsiveContainer width="100%" height={550}>
           <LineChart
             data={data}
             margin={{ top: 5, right: 30, left: 0, bottom: 5 }}
@@ -77,12 +77,13 @@ export function PriceChart({ data, stats }: PriceChartProps) {
             <Tooltip
               contentStyle={{
                 backgroundColor: '#fff',
-                border: '2px solid #e5e7eb',
+                border: '2px solid #3b82f6',
                 borderRadius: '8px',
                 padding: '12px',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
               }}
-              formatter={(value: any) => `€${value?.toFixed(3)}/L`}
-              labelFormatter={(label: any) => `📅 Día: ${label}`}
+              formatter={(value: any) => [`€${value?.toFixed(3)}/L`, '']}
+              labelFormatter={(label: any) => `📅 ${label}`}
               wrapperStyle={{ outline: 'none' }}
             />
             <Legend
@@ -94,7 +95,7 @@ export function PriceChart({ data, stats }: PriceChartProps) {
               type="monotone"
               dataKey="gasolina_95"
               stroke="#3b82f6"
-              strokeWidth={3}
+              strokeWidth={4}
               name="⛽ Gasolina 95"
               dot={false}
               isAnimationActive={false}
@@ -103,7 +104,7 @@ export function PriceChart({ data, stats }: PriceChartProps) {
               type="monotone"
               dataKey="gasoleoa"
               stroke="#10b981"
-              strokeWidth={3}
+              strokeWidth={4}
               name="🛢️ Gasóleo A"
               dot={false}
               isAnimationActive={false}
