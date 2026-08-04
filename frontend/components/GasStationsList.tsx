@@ -176,7 +176,6 @@ export function GasStationsList({ stations, loading = false, error = null, selec
 
       {/* Stations Table */}
       <div className="overflow-x-auto">
-        <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
             <tr className="border-b-2 border-gray-400 bg-gray-100">
