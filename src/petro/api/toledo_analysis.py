@@ -303,7 +303,7 @@ async def get_all_toledo_stations(max_distance_km: float = 150.0):
             "statistics": stats,
             "timestamp": datetime.now().isoformat(),
             "source": "Ministerio de Energía (Oficial)",
-            "gas_stations": filtered_stations
+            "stations": filtered_stations  # Use 'stations' for frontend compatibility
         }
 
         # Cache response
