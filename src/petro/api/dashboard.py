@@ -82,7 +82,7 @@ async def get_price_history_endpoint(days: int = 90, province: str = "spain"):
     Data is updated once per day (realistic for Spanish fuel market).
     Each data point represents the official daily price.
 
-    For Toledo: Returns REAL prices from Ministerio de Energía
+    For Toledo: Returns REAL historical prices from database (last 90 days)
     For Spain: Returns generated historical data for 90 days
 
     Args:
@@ -96,35 +96,99 @@ async def get_price_history_endpoint(days: int = 90, province: str = "spain"):
         if days > 90:
             days = 90
 
-        # For Toledo: Use REAL data from Ministerio de Energía
+        # For Toledo: Use REAL data from database (last 90 days)
         if province.lower() == "toledo":
             try:
-                real_data = MineturCarburantesConnector.fetch_toledo_stations()
-                stats = real_data['estadisticas']
+                from datetime import timedelta
+                async with AsyncSessionLocal() as session:
+                    # Get last N days of price data from database
+                    cutoff_date = datetime.utcnow() - timedelta(days=days)
+                    stmt = select(Price).where(
+                        Price.timestamp >= cutoff_date
+                    ).order_by(Price.timestamp)
+                    result = await session.execute(stmt)
+                    price_records = result.scalars().all()
 
-                # Return real current prices with statistics
-                return {
-                    "data_type": "daily",
-                    "update_frequency": "Datos reales del Ministerio",
-                    "province": "toledo",
-                    "days": 1,  # Only today's real data
-                    "timestamps": [real_data['fecha_actualizacion']],
-                    "gasolina_95": [stats['gasolina_95']['media']],
-                    "gasoleoa": [stats['gasoleoa']['media']],
-                    "count": 1,
-                    "gasolina_95_stats": stats['gasolina_95'],
-                    "gasoleoa_stats": stats['gasoleoa'],
-                    "period": {
-                        "start_date": real_data['fecha_actualizacion'],
-                        "end_date": real_data['fecha_actualizacion'],
-                        "days": 1,
-                    },
-                    "fuente": "Ministerio de Energía (Oficial)",
-                    "estaciones_analizadas": real_data['total_estaciones'],
-                }
+                    if price_records:
+                        timestamps = [p.timestamp.isoformat() for p in price_records]
+                        gasolina_95_values = [float(p.price_gasolina_95) for p in price_records]
+                        gasoleoa_values = [float(p.price_gasoleoa) for p in price_records]
+
+                        # Calculate statistics
+                        gasolina_95_min = min(gasolina_95_values)
+                        gasolina_95_max = max(gasolina_95_values)
+                        gasolina_95_avg = sum(gasolina_95_values) / len(gasolina_95_values)
+                        gasolina_95_current = gasolina_95_values[-1]
+                        gasolina_95_change = gasolina_95_current - gasolina_95_values[0]
+                        gasolina_95_change_percent = (gasolina_95_change / gasolina_95_values[0] * 100) if gasolina_95_values[0] != 0 else 0
+
+                        gasoleoa_min = min(gasoleoa_values)
+                        gasoleoa_max = max(gasoleoa_values)
+                        gasoleoa_avg = sum(gasoleoa_values) / len(gasoleoa_values)
+                        gasoleoa_current = gasoleoa_values[-1]
+                        gasoleoa_change = gasoleoa_current - gasoleoa_values[0]
+                        gasoleoa_change_percent = (gasoleoa_change / gasoleoa_values[0] * 100) if gasoleoa_values[0] != 0 else 0
+
+                        return {
+                            "data_type": "daily",
+                            "update_frequency": "Datos históricos reales del Ministerio",
+                            "province": "toledo",
+                            "days": len(price_records),
+                            "timestamps": timestamps,
+                            "gasolina_95": gasolina_95_values,
+                            "gasoleoa": gasoleoa_values,
+                            "count": len(price_records),
+                            "gasolina_95_stats": {
+                                "min": round(gasolina_95_min, 4),
+                                "max": round(gasolina_95_max, 4),
+                                "avg": round(gasolina_95_avg, 4),
+                                "current": round(gasolina_95_current, 4),
+                                "change": round(gasolina_95_change, 4),
+                                "change_percent": round(gasolina_95_change_percent, 2),
+                            },
+                            "gasoleoa_stats": {
+                                "min": round(gasoleoa_min, 4),
+                                "max": round(gasoleoa_max, 4),
+                                "avg": round(gasoleoa_avg, 4),
+                                "current": round(gasoleoa_current, 4),
+                                "change": round(gasoleoa_change, 4),
+                                "change_percent": round(gasoleoa_change_percent, 2),
+                            },
+                            "period": {
+                                "start_date": timestamps[0],
+                                "end_date": timestamps[-1],
+                                "days": len(price_records),
+                            },
+                            "fuente": "Base de datos histórica - Ministerio de Energía",
+                        }
+                    else:
+                        # Fallback to current day data if no historical data
+                        real_data = MineturCarburantesConnector.fetch_toledo_stations()
+                        stats = real_data['estadisticas']
+
+                        return {
+                            "data_type": "daily",
+                            "update_frequency": "Datos reales del Ministerio",
+                            "province": "toledo",
+                            "days": 1,
+                            "timestamps": [real_data['fecha_actualizacion']],
+                            "gasolina_95": [stats['gasolina_95']['media']],
+                            "gasoleoa": [stats['gasoleoa']['media']],
+                            "count": 1,
+                            "gasolina_95_stats": stats['gasolina_95'],
+                            "gasoleoa_stats": stats['gasoleoa'],
+                            "period": {
+                                "start_date": real_data['fecha_actualizacion'],
+                                "end_date": real_data['fecha_actualizacion'],
+                                "days": 1,
+                            },
+                            "fuente": "Ministerio de Energía (Oficial)",
+                            "estaciones_analizadas": real_data['total_estaciones'],
+                        }
+
             except Exception as e:
-                logger.warning(f"Error getting real Toledo data: {e}, falling back to generated")
-                # Fall back to generated data if API fails
+                logger.warning(f"Error getting Toledo historical data: {e}, falling back to generated")
+                # Fall back to generated data if fails
                 pass
 
         # For Spain or fallback: Use generated price history (90 days of daily data)
