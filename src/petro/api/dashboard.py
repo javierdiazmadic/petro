@@ -220,65 +220,34 @@ async def get_price_history_endpoint(days: int = 90, province: str = "spain"):
             except Exception as e:
                 logger.warning(f"Error getting Toledo data: {e}")
 
-        # SPAIN: Get average from Toledo as national average (fallback)
+        # SPAIN: Use generated price history (fallback when Ministerio unavailable)
         try:
-            from sqlalchemy import cast, Date
+            from petro.infrastructure.connectors.price_history_generator import get_price_history
 
-            async with AsyncSessionLocal() as session:
-                cutoff_date = datetime.utcnow() - timedelta(days=1)
+            history_data = get_price_history(days=90, province="spain")
 
-                # Get today's average from all Toledo data
-                stmt = select(
-                    func.avg(Price.price_gasolina_95).label('avg_gasolina_95'),
-                    func.avg(Price.price_gasoleoa).label('avg_gasoleoa'),
-                    func.max(Price.timestamp).label('last_timestamp'),
-                ).where(
-                    (Price.timestamp >= cutoff_date) &
-                    (func.lower(Price.region).like('toledo%'))
-                )
-
-                result = await session.execute(stmt)
-                data = result.first()
-
-                if data and data.avg_gasolina_95:
-                    return {
-                        "data_type": "daily",
-                        "update_frequency": "Datos actuales de Toledo (usado como media nacional)",
-                        "province": "spain",
-                        "days": 1,
-                        "timestamps": [data.last_timestamp.isoformat() if data.last_timestamp else datetime.utcnow().isoformat()],
-                        "gasolina_95": [float(data.avg_gasolina_95)],
-                        "gasoleoa": [float(data.avg_gasoleoa)],
-                        "count": 1,
-                        "gasolina_95_stats": {
-                            "min": round(float(data.avg_gasolina_95), 4),
-                            "max": round(float(data.avg_gasolina_95), 4),
-                            "avg": round(float(data.avg_gasolina_95), 4),
-                            "current": round(float(data.avg_gasolina_95), 4),
-                            "change": 0,
-                            "change_percent": 0,
-                        },
-                        "gasoleoa_stats": {
-                            "min": round(float(data.avg_gasoleoa), 4),
-                            "max": round(float(data.avg_gasoleoa), 4),
-                            "avg": round(float(data.avg_gasoleoa), 4),
-                            "current": round(float(data.avg_gasoleoa), 4),
-                            "change": 0,
-                            "change_percent": 0,
-                        },
-                        "period": {
-                            "start_date": (data.last_timestamp or datetime.utcnow()).isoformat(),
-                            "end_date": (data.last_timestamp or datetime.utcnow()).isoformat(),
-                            "days": 1,
-                        },
-                        "fuente": "Datos actuales de Toledo (usado como referencia nacional)",
-                        "nota": "Mostrando media de Toledo como referencia nacional",
-                    }
+            return {
+                "data_type": "daily",
+                "update_frequency": "Datos generados (media nacional)",
+                "province": "spain",
+                "days": days,
+                "timestamps": history_data["timestamps"],
+                "gasolina_95": history_data["gasolina_95"],
+                "gasoleoa": history_data["gasoleoa"],
+                "count": len(history_data["timestamps"]),
+                "gasolina_95_stats": history_data["gasolina_95_stats"],
+                "gasoleoa_stats": history_data["gasoleoa_stats"],
+                "period": {
+                    "start_date": history_data["start_date"],
+                    "end_date": history_data["end_date"],
+                    "days": days,
+                },
+                "fuente": "Datos generados realistas (España)",
+                "nota": "Mostrando datos realistas generados con tendencias de mercado",
+            }
         except Exception as e:
             logger.error(f"Error getting Spain data: {e}")
-
-        # Final fallback - return error
-        raise HTTPException(status_code=500, detail="No se pueden obtener datos")
+            raise HTTPException(status_code=500, detail="No se pueden obtener datos")
 
     except Exception as e:
         logger.error(f"Error getting price history: {e}", exc_info=True)
