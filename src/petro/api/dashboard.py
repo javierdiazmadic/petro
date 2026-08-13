@@ -220,33 +220,65 @@ async def get_price_history_endpoint(days: int = 90, province: str = "spain"):
             except Exception as e:
                 logger.warning(f"Error getting Toledo data: {e}")
 
-        # SPAIN: Get current average from Ministerio
+        # SPAIN: Get average from Toledo as national average (fallback)
         try:
-            real_data = MineturCarburantesConnector.fetch_toledo_stations()
-            stats = real_data['estadisticas']
+            from sqlalchemy import cast, Date
 
-            return {
-                "data_type": "daily",
-                "update_frequency": "Datos actuales del Ministerio de Energía",
-                "province": "spain",
-                "days": 1,
-                "timestamps": [real_data['fecha_actualizacion']],
-                "gasolina_95": [stats['gasolina_95']['media']],
-                "gasoleoa": [stats['gasoleoa']['media']],
-                "count": 1,
-                "gasolina_95_stats": stats['gasolina_95'],
-                "gasoleoa_stats": stats['gasoleoa'],
-                "period": {
-                    "start_date": real_data['fecha_actualizacion'],
-                    "end_date": real_data['fecha_actualizacion'],
-                    "days": 1,
-                },
-                "fuente": "Ministerio de Energía (Oficial - Promedio España)",
-                "nota": "Mostrando datos actuales. Para histórico completo, contactar administrador",
-            }
+            async with AsyncSessionLocal() as session:
+                cutoff_date = datetime.utcnow() - timedelta(days=1)
+
+                # Get today's average from all Toledo data
+                stmt = select(
+                    func.avg(Price.price_gasolina_95).label('avg_gasolina_95'),
+                    func.avg(Price.price_gasoleoa).label('avg_gasoleoa'),
+                    func.max(Price.timestamp).label('last_timestamp'),
+                ).where(
+                    (Price.timestamp >= cutoff_date) &
+                    (func.lower(Price.region).like('toledo%'))
+                )
+
+                result = await session.execute(stmt)
+                data = result.first()
+
+                if data and data.avg_gasolina_95:
+                    return {
+                        "data_type": "daily",
+                        "update_frequency": "Datos actuales de Toledo (usado como media nacional)",
+                        "province": "spain",
+                        "days": 1,
+                        "timestamps": [data.last_timestamp.isoformat() if data.last_timestamp else datetime.utcnow().isoformat()],
+                        "gasolina_95": [float(data.avg_gasolina_95)],
+                        "gasoleoa": [float(data.avg_gasoleoa)],
+                        "count": 1,
+                        "gasolina_95_stats": {
+                            "min": round(float(data.avg_gasolina_95), 4),
+                            "max": round(float(data.avg_gasolina_95), 4),
+                            "avg": round(float(data.avg_gasolina_95), 4),
+                            "current": round(float(data.avg_gasolina_95), 4),
+                            "change": 0,
+                            "change_percent": 0,
+                        },
+                        "gasoleoa_stats": {
+                            "min": round(float(data.avg_gasoleoa), 4),
+                            "max": round(float(data.avg_gasoleoa), 4),
+                            "avg": round(float(data.avg_gasoleoa), 4),
+                            "current": round(float(data.avg_gasoleoa), 4),
+                            "change": 0,
+                            "change_percent": 0,
+                        },
+                        "period": {
+                            "start_date": (data.last_timestamp or datetime.utcnow()).isoformat(),
+                            "end_date": (data.last_timestamp or datetime.utcnow()).isoformat(),
+                            "days": 1,
+                        },
+                        "fuente": "Datos actuales de Toledo (usado como referencia nacional)",
+                        "nota": "Mostrando media de Toledo como referencia nacional",
+                    }
         except Exception as e:
             logger.error(f"Error getting Spain data: {e}")
-            raise HTTPException(status_code=500, detail="No se pueden obtener datos del Ministerio")
+
+        # Final fallback - return error
+        raise HTTPException(status_code=500, detail="No se pueden obtener datos")
 
     except Exception as e:
         logger.error(f"Error getting price history: {e}", exc_info=True)
