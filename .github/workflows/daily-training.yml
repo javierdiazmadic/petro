@@ -1,0 +1,86 @@
+name: 🤖 Daily Model Training & Data Update
+
+on:
+  schedule:
+    - cron: '0 3 * * *'  # 3:00 AM UTC (4:00 AM España) todos los días
+  workflow_dispatch:     # Permitir ejecución manual
+
+jobs:
+  training:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      
+    steps:
+      - name: 📥 Checkout repositorio
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🐍 Setup Python 3.12
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: 📦 Instalar dependencias Python
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: 🔄 Ejecutar Pipeline de Entrenamiento
+        run: |
+          python scripts/daily_training.py
+        env:
+          TRAINING_DATE: ${{ github.event.repository.updated_at }}
+
+      - name: 📊 Exportar Modelos y Métricas
+        run: |
+          python scripts/export_models.py
+
+      - name: 📈 Generar Reporte de Entrenamiento
+        run: |
+          python scripts/generate_report.py
+
+      - name: 🔒 Configurar Git
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "PETRO Training Bot"
+
+      - name: 📤 Commit cambios
+        run: |
+          git add -A
+          if [ -n "$(git status --porcelain)" ]; then
+            git commit -m "🤖 Auto: Daily training & data update $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+            git push
+          else
+            echo "No hay cambios para commitear"
+          fi
+
+      - name: 📊 Resumen de Ejecución
+        if: always()
+        run: |
+          echo "✅ Entrenamiento completado"
+          echo "📅 Fecha: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+          if [ -f training_report.md ]; then
+            echo "📋 Reporte generado"
+          fi
+
+  notify:
+    runs-on: ubuntu-latest
+    needs: training
+    if: always()
+    
+    steps:
+      - name: 📢 Notificación de Éxito
+        if: success()
+        run: |
+          echo "✅ Pipeline completado exitosamente"
+          echo "📝 Los modelos han sido entrenados"
+          echo "📤 Los cambios fueron subidos a GitHub"
+
+      - name: ❌ Notificación de Fallo
+        if: failure()
+        run: |
+          echo "❌ Error en el pipeline"
+          exit 1
