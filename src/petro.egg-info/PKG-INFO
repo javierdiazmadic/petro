@@ -1,0 +1,249 @@
+Metadata-Version: 2.4
+Name: petro
+Version: 0.1.0
+Summary: Sistema de predicción del precio de gasolina y gasóleo en España
+Author-email: Javier Diaz <javier.diaz@madic.com>
+License: MIT
+Requires-Python: >=3.12
+Description-Content-Type: text/markdown
+Requires-Dist: fastapi>=0.110.0
+Requires-Dist: uvicorn[standard]>=0.28.0
+Requires-Dist: pydantic>=2.8.0
+Requires-Dist: pydantic-settings>=2.3.0
+Requires-Dist: httpx>=0.27.0
+Requires-Dist: aiohttp>=3.10.0
+Requires-Dist: asyncpg>=0.30.0
+Requires-Dist: sqlalchemy>=2.0.0
+Requires-Dist: psycopg[binary,pool]>=3.1.0
+Requires-Dist: alembic>=1.14.0
+Requires-Dist: redis>=5.0.0
+Requires-Dist: celery>=5.3.0
+Requires-Dist: pandas>=2.0.0
+Requires-Dist: numpy>=1.24.0
+Requires-Dist: polars>=0.20.0
+Requires-Dist: duckdb>=0.10.0
+Requires-Dist: scikit-learn>=1.3.0
+Requires-Dist: xgboost>=2.0.0
+Requires-Dist: lightgbm>=4.0.0
+Requires-Dist: shap>=0.44.0
+Requires-Dist: optuna>=3.0.0
+Requires-Dist: torch>=2.0.0
+Requires-Dist: transformers>=4.30.0
+Requires-Dist: sentence-transformers>=2.2.0
+Requires-Dist: feedparser>=6.0.0
+Requires-Dist: trafilatura>=1.6.0
+Requires-Dist: beautifulsoup4>=4.12.0
+Requires-Dist: lxml>=4.9.0
+Requires-Dist: langdetect>=1.0.9
+Requires-Dist: spacy>=3.5.0
+Requires-Dist: mlflow>=2.0.0
+Requires-Dist: prometheus-fastapi-instrumentator>=6.0.0
+Requires-Dist: python-json-logger>=2.0.0
+Requires-Dist: python-dotenv>=1.0.0
+Requires-Dist: tenacity>=8.0.0
+Requires-Dist: pytz>=2024.0
+Requires-Dist: requests>=2.28.0
+Provides-Extra: dev
+Requires-Dist: pytest==7.4.4; extra == "dev"
+Requires-Dist: pytest-asyncio==0.23.3; extra == "dev"
+Requires-Dist: pytest-cov==4.1.0; extra == "dev"
+Requires-Dist: pytest-mock==3.14.0; extra == "dev"
+Requires-Dist: pytest-xdist==3.6.1; extra == "dev"
+Requires-Dist: black==24.3.0; extra == "dev"
+Requires-Dist: isort==5.13.2; extra == "dev"
+Requires-Dist: ruff==0.4.4; extra == "dev"
+Requires-Dist: mypy==1.10.0; extra == "dev"
+Requires-Dist: pre-commit==3.7.0; extra == "dev"
+Provides-Extra: docker-dev
+Requires-Dist: docker==7.1.0; extra == "docker-dev"
+Requires-Dist: docker-compose==1.29.2; extra == "docker-dev"
+
+# PETRO — Sistema de Predicción de Precios de Gasolina y Gasóleo en España
+
+![Status](https://img.shields.io/badge/status-development-yellow)
+![Python](https://img.shields.io/badge/python-3.12+-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+
+## 📋 Descripción
+
+PETRO es un sistema de predicción de precios de gasolina (95) y gasóleo (A) en España basado en:
+
+- **Datos oficiales**: Geoportal de Precios de Carburantes (Ministerio)
+- **Machine Learning**: XGBoost + LightGBM + Random Forest
+- **Variables económicas**: Brent, WTI, EUR/USD, inventarios, producción OPEP
+- **NLP**: Procesamiento de noticias con BERT/Transformers
+- **Predicción**: Regresión (precio exacto) + clasificación derivada (probabilidad de subida/bajada)
+
+## 🚀 Características
+
+✅ **Stack moderno y escalable**
+- FastAPI + PostgreSQL + TimescaleDB
+- Celery para automatización (cada 15 min)
+- Redis para caché y task queue
+- MLflow para tracking de experimentos
+
+✅ **Machine Learning profesional**
+- Comparación de 3 modelos (XGBoost, LightGBM, RF)
+- SHAP para explicabilidad
+- Hyperparameter tuning con Optuna
+- Cross-validation y feature importance
+
+✅ **Monitorización y observabilidad**
+- Prometheus + Grafana (métricas)
+- ELK Stack (logs centralizados)
+- Endpoints `/health` y `/metrics`
+
+✅ **Desarrollo en servidor potente**
+- 125 GB RAM + 42 GB VRAM
+- GPU CUDA 12.1 para training
+- Modelos BERT/Transformers completos
+- Ray para procesamiento distribuido
+
+✅ **Preparado para producción**
+- Dockerizado completamente
+- IaC agnóstica de cloud (GCP, Azure, etc.)
+- Downgrade automático para Mini PC (Fase 13)
+- Clean Architecture + SOLID principles
+
+## 📚 Documentación
+
+- [**Arquitectura**](docs/00-arquitectura.md) — Diseño completo del sistema
+- [**Phase 1: Infraestructura**](PHASE_1_SUMMARY.md) — Docker, FastAPI, Celery
+- [**Phase 2: Base de Datos**](PHASE_2_SUMMARY.md) — SQLAlchemy, TimescaleDB
+- [**Phase 3: Ingestion**](PHASE_3_SUMMARY.md) — Conectores, reintentos
+- [**Phase 4: NLP**](PHASE_4_SUMMARY.md) — Procesamiento de noticias
+- [**Phase 5: Feature Engineering**](PHASE_5_SUMMARY.md) — Calculadoras de variables
+- [**Phase 6: Model Training**](docs/06-model-training.md) — Entrenamiento ML ([Summary](PHASE_6_SUMMARY.md))
+- [**Phase 7: Inference Pipeline**](docs/07-inference-pipeline.md) — Predicción < 100ms ([Summary](PHASE_7_SUMMARY.md))
+- [**Phase 8: Celery Automation**](docs/08-automation-celery.md) — Pipeline cada 15 min ([Summary](PHASE_8_SUMMARY.md))
+- [**Phase 9: REST API**](docs/09-rest-api.md) — Endpoints con FastAPI ([Summary](PHASE_9_SUMMARY.md))
+
+## ⚡ Inicio rápido
+
+### Con Docker (recomendado)
+
+```bash
+# Clonar y configurar
+git clone <repo>
+cd petro
+cp .env.example .env
+
+# Iniciar servicios
+make docker-build
+make docker-up
+
+# Verificar salud
+curl http://localhost:8000/api/v1/health
+
+# Acceder a servicios
+# API: http://localhost:8000
+# Grafana: http://localhost:3000 (admin/admin)
+# MLflow: http://localhost:5000
+# Kibana: http://localhost:5601
+```
+
+### Desarrollo local
+
+```bash
+# Setup
+python3.12 -m venv venv
+source venv/bin/activate
+make install-dev
+
+# Iniciar DB y Redis en Docker
+docker-compose up db redis -d
+
+# Iniciar aplicación
+make api-dev      # Terminal 1
+make celery-worker  # Terminal 2
+make celery-beat    # Terminal 3
+```
+
+## 📊 Estructura del proyecto
+
+```
+petro/
+├── src/petro/
+│   ├── api/           # FastAPI routers y schemas
+│   ├── core/          # Config, logging, excepciones
+│   ├── domain/        # Lógica de negocio pura
+│   ├── infrastructure/# BD, caché, conectores
+│   ├── ingestion/     # Descarga de datos
+│   ├── nlp/           # Procesamiento de noticias
+│   ├── features/      # Feature engineering
+│   ├── ml/            # Training e inferencia
+│   └── scheduler/     # Celery tasks y Beat
+├── tests/             # Unit, integration, E2E
+├── docs/              # Documentación
+└── infra/             # Docker, Terraform
+```
+
+## 🔄 Fases de desarrollo (Roadmap)
+
+| Fase | Descripción | Estado |
+|------|-------------|--------|
+| **0** | Arquitectura | ✅ Completada |
+| **1** | Infraestructura | ✅ Completada |
+| **2** | Base de datos | ✅ Completada |
+| **3** | Recolección de datos | ✅ Completada |
+| **4** | Procesamiento de noticias | ✅ Completada |
+| **5** | Ingeniería de variables | ✅ Completada |
+| **6** | Entrenamiento de modelos | ✅ Completada |
+| **7** | Inferencia | ✅ Completada |
+| **8** | Automatización (15 min) | ✅ Completada |
+| **9** | API REST | ✅ Completada |
+| **10** | Dashboard Web | ✅ Completada |
+| **11** | Sistema de explicaciones (SHAP) | ✅ Completada |
+| **12** | Reentrenamiento en cloud (GCP) | ✅ Completada |
+| **13** | Optimización para Mini PC | ✅ **Completada** |
+
+## 🛠 Stack Tecnológico
+
+### Backend
+- **Python 3.12** — Lenguaje principal
+- **FastAPI** — Framework web async
+- **Pydantic** — Validación de datos
+- **SQLAlchemy 2.0** — ORM async
+- **PostgreSQL 16 + TimescaleDB** — Base de datos series temporales
+
+### Machine Learning
+- **scikit-learn** — Preprocesamiento
+- **XGBoost** — Modelos boosting
+- **LightGBM** — Modelos boosting
+- **SHAP** — Explicabilidad
+- **Optuna** — Hyperparameter tuning
+- **PyTorch + CUDA** — GPU training
+- **Transformers** — BERT/NLP
+
+### Infraestructura
+- **Docker & Docker Compose** — Contenedores
+- **Celery** — Task queue distribuida
+- **Redis** — Caché y broker
+- **MLflow** — Tracking de experimentos
+- **Prometheus + Grafana** — Monitorización
+- **ELK Stack** — Logs centralizados
+- **Terraform** — IaC (cloud)
+
+### Testing
+- **pytest** — Framework testing
+- **pytest-asyncio** — Tests async
+- **pytest-cov** — Cobertura
+
+## 🤝 Contribuciones
+
+Este proyecto está en desarrollo activo. Las contribuciones siguen los principios de **Clean Architecture** y **SOLID**.
+
+## 📄 Licencia
+
+MIT License — Ver [LICENSE](LICENSE) para detalles.
+
+## 📧 Contacto
+
+**Autor**: Javier Diaz  
+**Email**: javier.diaz@madic.com
+
+---
+
+**Última actualización**: 2026-08-04  
+**Versión**: 1.0.0 (TODAS LAS 14 FASES COMPLETADAS)  
+**Status**: ✅ PROYECTO FINALIZADO Y LISTO PARA PRODUCCIÓN
