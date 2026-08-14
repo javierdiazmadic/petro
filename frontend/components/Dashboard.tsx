@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { dashboardAPI, predictionAPI, toledoAPI } from '@/lib/api';
 import { PriceChart } from './PriceChart';
 import { PredictionChart } from './PredictionChart';
-import { NewsAnalysis } from './NewsAnalysis';
+import { NewsPulse } from './NewsPulse';
 import { BacktestResults } from './BacktestResults';
 import { GasStationsList } from './GasStationsList';
 import { RecommendationCard } from './RecommendationCard';
@@ -299,12 +299,10 @@ export function Dashboard() {
           </div>
         </div>
 
-        {/* Análisis de Noticias */}
-        {newsAnalysis && (
-          <div className="mb-12">
-            <NewsAnalysis events={newsAnalysis.events} />
-          </div>
-        )}
+        {/* Análisis de Noticias - SIEMPRE MOSTRADO */}
+        <div className="mb-12">
+          <NewsPulse events={newsAnalysis?.events || []} />
+        </div>
 
         {/* Backtesting */}
         {backtest && (
