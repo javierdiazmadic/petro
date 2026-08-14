@@ -57,7 +57,22 @@ def run_training():
             return False
         
         logger.info("✅ Modelos exportados")
-        
+
+        # Ejecutar export_models_h5.py para formato .h5
+        logger.info("📦 ETAPA 2b: Exportando modelos en formato H5...")
+        result = subprocess.run(
+            [sys.executable, "scripts/export_models_h5.py"],
+            cwd=os.path.dirname(os.path.dirname(__file__)),
+            capture_output=True,
+            text=True
+        )
+
+        if result.returncode != 0:
+            logger.warning(f"⚠️ Advertencia en exportación H5: {result.stderr}")
+            # No es crítico, continuar
+        else:
+            logger.info("✅ Modelos H5 exportados")
+
         # Ejecutar generate_report.py
         logger.info("📝 ETAPA 3: Generando reporte...")
         result = subprocess.run(
@@ -106,7 +121,22 @@ def run_training():
             return False
         
         logger.info("✅ Cambios subidos a GitHub")
-        
+
+        # Descargar y cargar nuevos modelos
+        logger.info("📥 ETAPA 5: Descargando y cargando nuevos modelos...")
+        result = subprocess.run(
+            [sys.executable, "scripts/download_and_load_models.py"],
+            cwd=repo_path,
+            capture_output=True,
+            text=True
+        )
+
+        if result.returncode != 0:
+            logger.warning(f"⚠️ Advertencia al descargar modelos: {result.stderr}")
+            # No es crítico, el API continuará con modelos cacheados
+        else:
+            logger.info("✅ Nuevos modelos cargados exitosamente")
+
         logger.info("=" * 80)
         logger.info(f"🏁 ENTRENAMIENTO COMPLETADO - {datetime.utcnow().isoformat()}")
         logger.info("=" * 80)
