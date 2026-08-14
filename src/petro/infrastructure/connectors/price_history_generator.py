@@ -22,16 +22,18 @@ class PriceHistoryGenerator:
         "toledo": {"gasolina_95": 0.02, "gasoleoa": 0.01},  # Slightly more expensive in rural Toledo
     }
 
-    def __init__(self, days_back: int = 90, seed: int = None, province: str = "spain"):
+    def __init__(self, days_back: int = 90, seed: int = None, province: str = "spain", today: datetime = None):
         """Initialize price history generator.
 
         Args:
             days_back: Number of days of history to generate (default: 90 = 3 months)
             seed: Random seed for reproducible results
             province: Province code for regional price adjustments (default: "spain")
+            today: Override today's date (for testing/dynamic generation)
         """
         self.days_back = days_back
         self.province = province.lower()
+        self.today = today or datetime.utcnow()
         if seed is not None:
             random.seed(seed)
 
@@ -45,8 +47,8 @@ class PriceHistoryGenerator:
         gasolina_prices = []
         gasoleoa_prices = []
 
-        # Start 90 days ago
-        start_date = datetime.utcnow() - timedelta(days=self.days_back)
+        # Start N days ago from today
+        start_date = self.today - timedelta(days=self.days_back)
 
         # Get province adjustment
         adjustment = self.PROVINCE_ADJUSTMENTS.get(self.province, self.PROVINCE_ADJUSTMENTS["spain"])

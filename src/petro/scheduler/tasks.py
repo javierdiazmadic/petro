@@ -696,3 +696,53 @@ async def _full_pipeline_async():
             "timestamp": datetime.utcnow().isoformat(),
             "message": str(e)
         }
+
+
+@app.task(bind=True, max_retries=3, default_retry_delay=300)
+def daily_automation_pipeline(self):
+    """Daily Automation Pipeline - Complete Data Refresh & Model Retraining.
+
+    Runs daily at 3:00 AM UTC:
+    1. Download fresh prices from Ministerio
+    2. Update Toledo station prices
+    3. Fetch latest news and market events
+    4. Analyze news with NLP
+    5. Retrain ML models
+    6. Generate 30-day forecasts
+    7. Clear all caches for fresh data
+
+    With automatic exponential backoff retry (3 retries: 5, 10, 20 minutes).
+
+    Returns:
+        Complete pipeline execution results
+    """
+    try:
+        logger.info("=" * 80)
+        logger.info("🚀 Starting Daily Automation Pipeline")
+        logger.info(f"Attempt: {self.request.retries + 1}/3")
+        logger.info("=" * 80)
+
+        import asyncio
+        from petro.scheduler.daily_automation import run_complete_pipeline
+
+        result = asyncio.run(run_complete_pipeline())
+
+        logger.info("=" * 80)
+        logger.info("✅ Daily Automation Pipeline COMPLETED SUCCESSFULLY")
+        logger.info("=" * 80)
+
+        return result
+
+    except Exception as exc:
+        logger.error(f"❌ Daily Automation Pipeline FAILED: {exc}", exc_info=True)
+
+        # Exponential backoff: 5min, 10min, 20min
+        countdown_seconds = {
+            0: 300,      # First retry after 5 minutes
+            1: 600,      # Second retry after 10 minutes
+            2: 1200      # Third retry after 20 minutes
+        }.get(self.request.retries, 1200)
+
+        logger.warning(f"⏰ Retrying in {countdown_seconds}s ({countdown_seconds/60:.0f} minutes)...")
+
+        raise self.retry(exc=exc, countdown=countdown_seconds)

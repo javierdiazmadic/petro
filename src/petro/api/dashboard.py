@@ -76,16 +76,18 @@ async def get_stats():
 
 
 @router.get("/prices/history")
-async def get_price_history_endpoint(days: int = 90, province: str = "spain"):
+async def get_price_history_endpoint(days: int = 90, province: str = "spain", _t: int = 0):
     """Get daily price history for 3 months (default 90 days).
 
     Returns REAL data from Ministerio de Energía for both Toledo and Spain.
     - Toledo: Historical data from database with interpolation
     - Spain: Generated realistic price data with market trends
+    - Data is ALWAYS fresh (no caching) to ensure real-time updates
 
     Args:
         days: Number of days of history (default 90, max 90)
         province: Province code ("spain" or "toledo")
+        _t: Timestamp parameter (auto-added by frontend to bust cache)
 
     Returns:
         Daily prices with statistics

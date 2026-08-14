@@ -267,17 +267,18 @@ def classify_by_brand(stations: List[Dict]) -> Dict[str, List[Dict]]:
 
 
 @router.get("/all-stations")
-async def get_all_toledo_stations(max_distance_km: float = 150.0):
+async def get_all_toledo_stations(max_distance_km: float = 150.0, _t: int = 0):
     """Get ALL gas stations in Toledo province (246 total).
 
     Real data from Ministerio de Energía with:
     - Price statistics (min, max, average)
-    - Distance from Los Yébenes
+    - Distance from Toledo center
     - Comparison with Toledo average prices
-    - 1-hour caching
+    - NO caching - always returns fresh data
 
     Args:
         max_distance_km: Maximum distance from Toledo center (default: 150km)
+        _t: Timestamp parameter (cache buster)
 
     Returns:
         JSON with all Toledo stations data and statistics
@@ -285,11 +286,11 @@ async def get_all_toledo_stations(max_distance_km: float = 150.0):
     try:
         logger.info("Getting all Toledo gas stations...")
 
-        # Check cache first
-        cache_key = "toledo_all_stations"
-        cached = get_cached_data(cache_key)
-        if cached:
-            return cached
+        # Skip cache - always fresh data
+        # cache_key = "toledo_all_stations"
+        # cached = get_cached_data(cache_key)
+        # if cached:
+        #     return cached
 
         # Fetch from database - TODAS filter
         ministerio_data = fetch_toledo_data_from_db('todas')
@@ -330,8 +331,8 @@ async def get_all_toledo_stations(max_distance_km: float = 150.0):
             "stations": filtered_stations  # Use 'stations' for frontend compatibility
         }
 
-        # Cache response
-        cache_data(cache_key, response)
+        # Skip cache - always return fresh data
+        # cache_data(cache_key, response)
 
         return response
 
