@@ -70,3 +70,23 @@ export const predictionAPI = {
   // Get AI recommendation based on forecasts
   getRecommendation: () => api.get('/api/v1/predictions/recommendation'),
 };
+
+// Models API endpoints
+export const modelsAPI = {
+  // Get information about all trained models
+  // Returns: best_model, loaded_models count, metrics for each
+  getModelsInfo: () => api.get('/api/v1/models/info'),
+
+  // Get the best performing model (highest R²)
+  // Returns: xgboost, lightgbm, or randomforest with metrics
+  getBestModel: () => api.get('/api/v1/models/best'),
+
+  // Get detailed info about a specific model
+  // modelName: 'xgboost', 'lightgbm', or 'randomforest'
+  getModel: (modelName: string) =>
+    api.get(`/api/v1/models/${modelName}`),
+
+  // Force reload models from cache
+  // Useful after new training or manual updates
+  refreshModels: () => api.post('/api/v1/models/refresh'),
+};

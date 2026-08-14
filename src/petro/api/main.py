@@ -15,6 +15,8 @@ from petro.api.routes import router as api_router
 from petro.api.dashboard import router as dashboard_router
 from petro.api.toledo_analysis import router as toledo_router
 from petro.api.predictions import router as predictions_router
+from petro.api.models import router as models_router
+from petro.ml.model_loader import models_registry
 
 logger = get_logger(__name__)
 
@@ -23,7 +25,20 @@ logger = get_logger(__name__)
 async def lifespan(app: FastAPI):
     """Application lifespan context manager."""
     logger.info("Application startup")
+
+    # Load trained models from cache
+    try:
+        logger.info("🤖 Loading trained models from cache...")
+        models_registry.load_models_from_cache()
+        loaded_count = sum(1 for m in models_registry.get_all_models().values() if m is not None)
+        best_model = models_registry.get_best_model()
+        logger.info(f"✅ Models loaded: {loaded_count}/3 (best: {best_model})")
+    except Exception as e:
+        logger.warning(f"⚠️ Could not load models: {e}")
+        logger.info("Continuing without models - they can be loaded later via POST /api/v1/models/refresh")
+
     yield
+
     logger.info("Application shutdown")
 
 
@@ -53,6 +68,7 @@ def create_app() -> FastAPI:
     app.include_router(dashboard_router)
     app.include_router(toledo_router)
     app.include_router(predictions_router)
+    app.include_router(models_router)  # Models management endpoints
 
     # Exception handlers
     @app.exception_handler(PetroException)

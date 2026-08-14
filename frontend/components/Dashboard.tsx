@@ -15,6 +15,7 @@ import { GasStationsTableDynamic } from './GasStationsTableDynamic';
 import { ComparisonChart } from './ComparisonChart';
 import { StatsCard } from './StatsCard';
 import { ToledoInteractiveMap } from './ToledoInteractiveMap';
+import { ModelsInfo } from './ModelsInfo';
 
 export function Dashboard() {
   const [stats, setStats] = useState<any>(null);
@@ -441,6 +442,11 @@ export function Dashboard() {
               <p className="text-gray-500">Sin datos disponibles</p>
             )}
           </div>
+        </div>
+
+        {/* Modelos Entrenados Info */}
+        <div className="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow mb-12">
+          <ModelsInfo />
         </div>
 
         {/* Mapa Interactivo de Gasolineras de Toledo */}
